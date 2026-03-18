@@ -23,10 +23,8 @@ final class GuardedWriter implements WriterInterface
     /**
      * Create a new guarded writer instance.
      *
-     * @param \Dotenv\Repository\Adapter\WriterInterface $writer
      * @param string[]                                   $allowList
      *
-     * @return void
      */
     public function __construct(WriterInterface $writer, array $allowList)
     {
@@ -38,7 +36,6 @@ final class GuardedWriter implements WriterInterface
      * Write to an environment variable, if possible.
      *
      * @param non-empty-string $name
-     * @param string           $value
      *
      * @return bool
      */
@@ -75,10 +72,8 @@ final class GuardedWriter implements WriterInterface
      * Determine if the given variable is allowed.
      *
      * @param non-empty-string $name
-     *
-     * @return bool
      */
-    private function isAllowed(string $name)
+    private function isAllowed(string $name): bool
     {
         return \in_array($name, $this->allowList, true);
     }

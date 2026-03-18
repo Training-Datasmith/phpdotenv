@@ -19,8 +19,6 @@ final class MultiReader implements ReaderInterface
      * Create a new multi-reader instance.
      *
      * @param \Dotenv\Repository\Adapter\ReaderInterface[] $readers
-     *
-     * @return void
      */
     public function __construct(array $readers)
     {

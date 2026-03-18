@@ -16,15 +16,13 @@ final class Loader implements LoaderInterface
      * We'll substitute any nested variables, and send each variable to the
      * repository, with the effect of actually mutating the environment.
      *
-     * @param \Dotenv\Repository\RepositoryInterface $repository
      * @param \Dotenv\Parser\Entry[]                 $entries
-     *
      * @return array<string, string|null>
      */
-    public function load(RepositoryInterface $repository, array $entries)
+    public function load(RepositoryInterface $repository, array $entries): array
     {
         /** @var array<string, string|null> */
-        return \array_reduce($entries, static function (array $vars, Entry $entry) use ($repository) {
+        return \array_reduce($entries, static function (array $vars, Entry $entry) use ($repository): array {
             $name = $entry->getName();
 
             $value = $entry->getValue()->map(static function (Value $value) use ($repository) {

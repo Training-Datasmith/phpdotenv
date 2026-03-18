@@ -60,10 +60,8 @@ final class RepositoryBuilder
      *
      * @param \Dotenv\Repository\Adapter\ReaderInterface[] $readers
      * @param \Dotenv\Repository\Adapter\WriterInterface[] $writers
-     * @param bool                                         $immutable
      * @param string[]|null                                $allowList
      *
-     * @return void
      */
     private function __construct(array $readers = [], array $writers = [], bool $immutable = false, ?array $allowList = null)
     {
@@ -75,20 +73,16 @@ final class RepositoryBuilder
 
     /**
      * Create a new repository builder instance with no adapters added.
-     *
-     * @return \Dotenv\Repository\RepositoryBuilder
      */
-    public static function createWithNoAdapters()
+    public static function createWithNoAdapters(): self
     {
         return new self();
     }
 
     /**
      * Create a new repository builder instance with the default adapters added.
-     *
-     * @return \Dotenv\Repository\RepositoryBuilder
      */
-    public static function createWithDefaultAdapters()
+    public static function createWithDefaultAdapters(): self
     {
         $adapters = \iterator_to_array(self::defaultAdapters());
 
@@ -113,7 +107,6 @@ final class RepositoryBuilder
     /**
      * Determine if the given name if of an adapterclass.
      *
-     * @param string $name
      *
      * @return bool
      */
@@ -135,10 +128,8 @@ final class RepositoryBuilder
      * @param \Dotenv\Repository\Adapter\ReaderInterface|string $reader
      *
      * @throws \InvalidArgumentException
-     *
-     * @return \Dotenv\Repository\RepositoryBuilder
      */
-    public function addReader($reader)
+    public function addReader($reader): self
     {
         if (!(\is_string($reader) && self::isAnAdapterClass($reader)) && !($reader instanceof ReaderInterface)) {
             throw new InvalidArgumentException(
@@ -168,10 +159,8 @@ final class RepositoryBuilder
      * @param \Dotenv\Repository\Adapter\WriterInterface|string $writer
      *
      * @throws \InvalidArgumentException
-     *
-     * @return \Dotenv\Repository\RepositoryBuilder
      */
-    public function addWriter($writer)
+    public function addWriter($writer): self
     {
         if (!(\is_string($writer) && self::isAnAdapterClass($writer)) && !($writer instanceof WriterInterface)) {
             throw new InvalidArgumentException(
@@ -202,10 +191,8 @@ final class RepositoryBuilder
      * @param \Dotenv\Repository\Adapter\WriterInterface|string $adapter
      *
      * @throws \InvalidArgumentException
-     *
-     * @return \Dotenv\Repository\RepositoryBuilder
      */
-    public function addAdapter($adapter)
+    public function addAdapter($adapter): self
     {
         if (!(\is_string($adapter) && self::isAnAdapterClass($adapter)) && !($adapter instanceof AdapterInterface)) {
             throw new InvalidArgumentException(
@@ -229,10 +216,8 @@ final class RepositoryBuilder
 
     /**
      * Creates a repository builder with mutability enabled.
-     *
-     * @return \Dotenv\Repository\RepositoryBuilder
      */
-    public function immutable()
+    public function immutable(): self
     {
         return new self($this->readers, $this->writers, true, $this->allowList);
     }
@@ -241,10 +226,8 @@ final class RepositoryBuilder
      * Creates a repository builder with the given allow list.
      *
      * @param string[]|null $allowList
-     *
-     * @return \Dotenv\Repository\RepositoryBuilder
      */
-    public function allowList(?array $allowList = null)
+    public function allowList(?array $allowList = null): self
     {
         return new self($this->readers, $this->writers, $this->immutable, $allowList);
     }
@@ -254,7 +237,7 @@ final class RepositoryBuilder
      *
      * @return \Dotenv\Repository\RepositoryInterface
      */
-    public function make()
+    public function make(): \Dotenv\Repository\AdapterRepository
     {
         $reader = new MultiReader($this->readers);
         $writer = new MultiWriter($this->writers);

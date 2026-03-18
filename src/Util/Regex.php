@@ -16,8 +16,6 @@ final class Regex
      * This class is a singleton.
      *
      * @codeCoverageIgnore
-     *
-     * @return void
      */
     private function __construct()
     {
@@ -27,14 +25,12 @@ final class Regex
     /**
      * Perform a preg match, wrapping up the result.
      *
-     * @param string $pattern
-     * @param string $subject
      *
      * @return \GrahamCampbell\ResultType\Result<bool, string>
      */
     public static function matches(string $pattern, string $subject)
     {
-        return self::pregAndWrap(static function (string $subject) use ($pattern) {
+        return self::pregAndWrap(static function (string $subject) use ($pattern): bool {
             return @\preg_match($pattern, $subject) === 1;
         }, $subject);
     }
@@ -42,14 +38,12 @@ final class Regex
     /**
      * Perform a preg match all, wrapping up the result.
      *
-     * @param string $pattern
-     * @param string $subject
      *
      * @return \GrahamCampbell\ResultType\Result<int, string>
      */
     public static function occurrences(string $pattern, string $subject)
     {
-        return self::pregAndWrap(static function (string $subject) use ($pattern) {
+        return self::pregAndWrap(static function (string $subject) use ($pattern): int {
             return (int) @\preg_match_all($pattern, $subject);
         }, $subject);
     }
@@ -57,10 +51,7 @@ final class Regex
     /**
      * Perform a preg replace callback, wrapping up the result.
      *
-     * @param string                     $pattern
      * @param callable(string[]): string $callback
-     * @param string                     $subject
-     * @param int|null                   $limit
      *
      * @return \GrahamCampbell\ResultType\Result<string, string>
      */
@@ -74,15 +65,12 @@ final class Regex
     /**
      * Perform a preg split, wrapping up the result.
      *
-     * @param string $pattern
-     * @param string $subject
      *
      * @return \GrahamCampbell\ResultType\Result<string[], string>
      */
     public static function split(string $pattern, string $subject)
     {
-        return self::pregAndWrap(static function (string $subject) use ($pattern) {
-            /** @var string[] */
+        return self::pregAndWrap(static function (string $subject) use ($pattern): array {
             return (array) @\preg_split($pattern, $subject);
         }, $subject);
     }
@@ -93,7 +81,6 @@ final class Regex
      * @template V
      *
      * @param callable(string): V $operation
-     * @param string              $subject
      *
      * @return \GrahamCampbell\ResultType\Result<V, string>
      */

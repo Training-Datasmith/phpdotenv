@@ -30,10 +30,7 @@ final class ReplacingWriter implements WriterInterface
     /**
      * Create a new replacement writer instance.
      *
-     * @param \Dotenv\Repository\Adapter\WriterInterface $writer
-     * @param \Dotenv\Repository\Adapter\ReaderInterface $reader
      *
-     * @return void
      */
     public function __construct(WriterInterface $writer, ReaderInterface $reader)
     {
@@ -46,7 +43,6 @@ final class ReplacingWriter implements WriterInterface
      * Write to an environment variable, if possible.
      *
      * @param non-empty-string $name
-     * @param string           $value
      *
      * @return bool
      */
@@ -84,10 +80,8 @@ final class ReplacingWriter implements WriterInterface
      * that we are aware of.
      *
      * @param non-empty-string $name
-     *
-     * @return bool
      */
-    private function exists(string $name)
+    private function exists(string $name): bool
     {
         if (isset($this->seen[$name])) {
             return true;

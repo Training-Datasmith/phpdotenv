@@ -9,7 +9,6 @@ interface RepositoryInterface
     /**
      * Determine if the given environment variable is defined.
      *
-     * @param string $name
      *
      * @return bool
      */
@@ -18,10 +17,8 @@ interface RepositoryInterface
     /**
      * Get an environment variable.
      *
-     * @param string $name
      *
      * @throws \InvalidArgumentException
-     *
      * @return string|null
      */
     public function get(string $name);
@@ -29,8 +26,6 @@ interface RepositoryInterface
     /**
      * Set an environment variable.
      *
-     * @param string $name
-     * @param string $value
      *
      * @throws \InvalidArgumentException
      *
@@ -41,10 +36,8 @@ interface RepositoryInterface
     /**
      * Clear an environment variable.
      *
-     * @param string $name
      *
      * @throws \InvalidArgumentException
-     *
      * @return bool
      */
     public function clear(string $name);

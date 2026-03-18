@@ -27,10 +27,7 @@ final class AdapterRepository implements RepositoryInterface
     /**
      * Create a new adapter repository instance.
      *
-     * @param \Dotenv\Repository\Adapter\ReaderInterface $reader
-     * @param \Dotenv\Repository\Adapter\WriterInterface $writer
      *
-     * @return void
      */
     public function __construct(ReaderInterface $reader, WriterInterface $writer)
     {
@@ -41,11 +38,9 @@ final class AdapterRepository implements RepositoryInterface
     /**
      * Determine if the given environment variable is defined.
      *
-     * @param string $name
      *
-     * @return bool
      */
-    public function has(string $name)
+    public function has(string $name): bool
     {
         return '' !== $name && $this->reader->read($name)->isDefined();
     }
@@ -53,10 +48,8 @@ final class AdapterRepository implements RepositoryInterface
     /**
      * Get an environment variable.
      *
-     * @param string $name
      *
      * @throws \InvalidArgumentException
-     *
      * @return string|null
      */
     public function get(string $name)
@@ -71,8 +64,6 @@ final class AdapterRepository implements RepositoryInterface
     /**
      * Set an environment variable.
      *
-     * @param string $name
-     * @param string $value
      *
      * @throws \InvalidArgumentException
      *
@@ -90,10 +81,8 @@ final class AdapterRepository implements RepositoryInterface
     /**
      * Clear an environment variable.
      *
-     * @param string $name
      *
      * @throws \InvalidArgumentException
-     *
      * @return bool
      */
     public function clear(string $name)

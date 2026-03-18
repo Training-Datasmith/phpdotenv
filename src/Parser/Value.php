@@ -25,10 +25,8 @@ final class Value
     /**
      * Internal constructor for a value.
      *
-     * @param string $chars
      * @param int[]  $vars
      *
-     * @return void
      */
     private function __construct(string $chars, array $vars)
     {
@@ -38,10 +36,8 @@ final class Value
 
     /**
      * Create an empty value instance.
-     *
-     * @return \Dotenv\Parser\Value
      */
-    public static function blank()
+    public static function blank(): self
     {
         return new self('', []);
     }
@@ -49,12 +45,9 @@ final class Value
     /**
      * Create a new value instance, appending the characters.
      *
-     * @param string $chars
-     * @param bool   $var
      *
-     * @return \Dotenv\Parser\Value
      */
-    public function append(string $chars, bool $var)
+    public function append(string $chars, bool $var): self
     {
         return new self(
             $this->chars.$chars,

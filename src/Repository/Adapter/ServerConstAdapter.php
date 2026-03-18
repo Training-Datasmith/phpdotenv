@@ -11,8 +11,6 @@ final class ServerConstAdapter implements AdapterInterface
 {
     /**
      * Create a new server const adapter instance.
-     *
-     * @return void
      */
     private function __construct()
     {
@@ -41,10 +39,10 @@ final class ServerConstAdapter implements AdapterInterface
     {
         /** @var \PhpOption\Option<string> */
         return Option::fromArraysValue($_SERVER, $name)
-            ->filter(static function ($value) {
+            ->filter(static function ($value): bool {
                 return \is_scalar($value);
             })
-            ->map(static function ($value) {
+            ->map(static function ($value): string {
                 if ($value === false) {
                     return 'false';
                 }
@@ -61,11 +59,9 @@ final class ServerConstAdapter implements AdapterInterface
      * Write to an environment variable, if possible.
      *
      * @param non-empty-string $name
-     * @param string           $value
      *
-     * @return bool
      */
-    public function write(string $name, string $value)
+    public function write(string $name, string $value): bool
     {
         $_SERVER[$name] = $value;
 
@@ -76,10 +72,8 @@ final class ServerConstAdapter implements AdapterInterface
      * Delete an environment variable, if possible.
      *
      * @param non-empty-string $name
-     *
-     * @return bool
      */
-    public function delete(string $name)
+    public function delete(string $name): bool
     {
         unset($_SERVER[$name]);
 

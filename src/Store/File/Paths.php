@@ -13,8 +13,6 @@ final class Paths
      * This class is a singleton.
      *
      * @codeCoverageIgnore
-     *
-     * @return void
      */
     private function __construct()
     {
@@ -29,7 +27,7 @@ final class Paths
      *
      * @return string[]
      */
-    public static function filePaths(array $paths, array $names)
+    public static function filePaths(array $paths, array $names): array
     {
         $files = [];
 

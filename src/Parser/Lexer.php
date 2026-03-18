@@ -17,8 +17,6 @@ final class Lexer
      * This class is a singleton.
      *
      * @codeCoverageIgnore
-     *
-     * @return void
      */
     private function __construct()
     {
@@ -31,7 +29,6 @@ final class Lexer
      * Multibyte string processing is not needed here, and nether is error
      * handling, for performance reasons.
      *
-     * @param string $content
      *
      * @return \Generator<string>
      */

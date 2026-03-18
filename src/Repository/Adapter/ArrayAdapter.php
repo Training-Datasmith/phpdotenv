@@ -18,8 +18,6 @@ final class ArrayAdapter implements AdapterInterface
 
     /**
      * Create a new array adapter instance.
-     *
-     * @return void
      */
     private function __construct()
     {
@@ -53,11 +51,9 @@ final class ArrayAdapter implements AdapterInterface
      * Write to an environment variable, if possible.
      *
      * @param non-empty-string $name
-     * @param string           $value
      *
-     * @return bool
      */
-    public function write(string $name, string $value)
+    public function write(string $name, string $value): bool
     {
         $this->variables[$name] = $value;
 
@@ -68,10 +64,8 @@ final class ArrayAdapter implements AdapterInterface
      * Delete an environment variable, if possible.
      *
      * @param non-empty-string $name
-     *
-     * @return bool
      */
-    public function delete(string $name)
+    public function delete(string $name): bool
     {
         unset($this->variables[$name]);
 

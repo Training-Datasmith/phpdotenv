@@ -17,8 +17,6 @@ final class Str
      * This class is a singleton.
      *
      * @codeCoverageIgnore
-     *
-     * @return void
      */
     private function __construct()
     {
@@ -28,8 +26,6 @@ final class Str
     /**
      * Convert a string to UTF-8 from the given encoding.
      *
-     * @param string      $input
-     * @param string|null $encoding
      *
      * @return \GrahamCampbell\ResultType\Result<string, string>
      */
@@ -58,7 +54,7 @@ final class Str
          * @see https://en.wikipedia.org/wiki/Byte_order_mark
          * @see https://github.com/vlucas/phpdotenv/issues/500
          */
-        if (\substr($converted, 0, 3) == "\xEF\xBB\xBF") {
+        if (str_starts_with($converted, "\xEF\xBB\xBF")) {
             $converted = \substr($converted, 3);
         }
 
@@ -69,8 +65,6 @@ final class Str
     /**
      * Search for a given substring of the input.
      *
-     * @param string $haystack
-     * @param string $needle
      *
      * @return \PhpOption\Option<int>
      */
@@ -83,13 +77,9 @@ final class Str
     /**
      * Grab the specified substring of the input.
      *
-     * @param string   $input
-     * @param int      $start
-     * @param int|null $length
      *
-     * @return string
      */
-    public static function substr(string $input, int $start, ?int $length = null)
+    public static function substr(string $input, int $start, ?int $length = null): string
     {
         return \mb_substr($input, $start, $length, 'UTF-8');
     }
@@ -97,11 +87,9 @@ final class Str
     /**
      * Compute the length of the given string.
      *
-     * @param string $input
      *
-     * @return int
      */
-    public static function len(string $input)
+    public static function len(string $input): int
     {
         return \mb_strlen($input, 'UTF-8');
     }

@@ -17,8 +17,6 @@ final class Reader
      * This class is a singleton.
      *
      * @codeCoverageIgnore
-     *
-     * @return void
      */
     private function __construct()
     {
@@ -33,14 +31,12 @@ final class Reader
      * at most one. File paths that couldn't be read are omitted entirely.
      *
      * @param string[]    $filePaths
-     * @param bool        $shortCircuit
-     * @param string|null $fileEncoding
      *
      * @throws \Dotenv\Exception\InvalidEncodingException
      *
      * @return array<string, string>
      */
-    public static function read(array $filePaths, bool $shortCircuit = true, ?string $fileEncoding = null)
+    public static function read(array $filePaths, bool $shortCircuit = true, ?string $fileEncoding = null): array
     {
         $output = [];
 
@@ -60,8 +56,6 @@ final class Reader
     /**
      * Read the given file.
      *
-     * @param string      $path
-     * @param string|null $encoding
      *
      * @throws \Dotenv\Exception\InvalidEncodingException
      *
@@ -73,7 +67,7 @@ final class Reader
         $content = Option::fromValue(@\file_get_contents($path), false);
 
         return $content->flatMap(static function (string $content) use ($encoding) {
-            return Str::utf8($content, $encoding)->mapError(static function (string $error) {
+            return Str::utf8($content, $encoding)->mapError(static function (string $error): void {
                 throw new InvalidEncodingException($error);
             })->success();
         });

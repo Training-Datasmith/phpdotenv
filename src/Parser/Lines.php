@@ -13,8 +13,6 @@ final class Lines
      * This class is a singleton.
      *
      * @codeCoverageIgnore
-     *
-     * @return void
      */
     private function __construct()
     {
@@ -30,7 +28,7 @@ final class Lines
      *
      * @return string[]
      */
-    public static function process(array $lines)
+    public static function process(array $lines): array
     {
         $output = [];
         $multiline = false;
@@ -50,13 +48,11 @@ final class Lines
     /**
      * Used to make all multiline variable process.
      *
-     * @param bool     $multiline
-     * @param string   $line
      * @param string[] $buffer
      *
      * @return array{bool,string, string[]}
      */
-    private static function multilineProcess(bool $multiline, string $line, array $buffer)
+    private static function multilineProcess(bool $multiline, string $line, array $buffer): array
     {
         $startsOnCurrentLine = $multiline ? false : self::looksLikeMultilineStart($line);
 
@@ -81,13 +77,12 @@ final class Lines
     /**
      * Determine if the given line can be the start of a multiline variable.
      *
-     * @param string $line
      *
      * @return bool
      */
     private static function looksLikeMultilineStart(string $line)
     {
-        return Str::pos($line, '="')->map(static function () use ($line) {
+        return Str::pos($line, '="')->map(static function () use ($line): bool {
             return self::looksLikeMultilineStop($line, true) === false;
         })->getOrElse(false);
     }
@@ -95,8 +90,6 @@ final class Lines
     /**
      * Determine if the given line can be the start of a multiline variable.
      *
-     * @param string $line
-     * @param bool   $started
      *
      * @return bool
      */
@@ -106,7 +99,7 @@ final class Lines
             return true;
         }
 
-        return Regex::occurrences('/(?=([^\\\\]"))/', \str_replace('\\\\', '', $line))->map(static function (int $count) use ($started) {
+        return Regex::occurrences('/(?=([^\\\\]"))/', \str_replace('\\\\', '', $line))->map(static function (int $count) use ($started): bool {
             return $started ? $count > 1 : $count >= 1;
         })->success()->getOrElse(false);
     }
@@ -114,11 +107,9 @@ final class Lines
     /**
      * Determine if the line in the file is a comment or whitespace.
      *
-     * @param string $line
      *
-     * @return bool
      */
-    private static function isCommentOrWhitespace(string $line)
+    private static function isCommentOrWhitespace(string $line): bool
     {
         $line = \trim($line);
 

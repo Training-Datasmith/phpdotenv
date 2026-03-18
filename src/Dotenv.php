@@ -50,12 +50,7 @@ class Dotenv
     /**
      * Create a new dotenv instance.
      *
-     * @param \Dotenv\Store\StoreInterface           $store
-     * @param \Dotenv\Parser\ParserInterface         $parser
-     * @param \Dotenv\Loader\LoaderInterface         $loader
-     * @param \Dotenv\Repository\RepositoryInterface $repository
      *
-     * @return void
      */
     public function __construct(
         StoreInterface $store,
@@ -72,15 +67,11 @@ class Dotenv
     /**
      * Create a new dotenv instance.
      *
-     * @param \Dotenv\Repository\RepositoryInterface $repository
      * @param string|string[]                        $paths
      * @param string|string[]|null                   $names
-     * @param bool                                   $shortCircuit
-     * @param string|null                            $fileEncoding
      *
-     * @return \Dotenv\Dotenv
      */
-    public static function create(RepositoryInterface $repository, $paths, $names = null, bool $shortCircuit = true, ?string $fileEncoding = null)
+    public static function create(RepositoryInterface $repository, $paths, $names = null, bool $shortCircuit = true, ?string $fileEncoding = null): self
     {
         $builder = $names === null ? StoreBuilder::createWithDefaultName() : StoreBuilder::createWithNoNames();
 
@@ -104,8 +95,6 @@ class Dotenv
      *
      * @param string|string[]      $paths
      * @param string|string[]|null $names
-     * @param bool                 $shortCircuit
-     * @param string|null          $fileEncoding
      *
      * @return \Dotenv\Dotenv
      */
@@ -121,8 +110,6 @@ class Dotenv
      *
      * @param string|string[]      $paths
      * @param string|string[]|null $names
-     * @param bool                 $shortCircuit
-     * @param string|null          $fileEncoding
      *
      * @return \Dotenv\Dotenv
      */
@@ -140,8 +127,6 @@ class Dotenv
      *
      * @param string|string[]      $paths
      * @param string|string[]|null $names
-     * @param bool                 $shortCircuit
-     * @param string|null          $fileEncoding
      *
      * @return \Dotenv\Dotenv
      */
@@ -157,8 +142,6 @@ class Dotenv
      *
      * @param string|string[]      $paths
      * @param string|string[]|null $names
-     * @param bool                 $shortCircuit
-     * @param string|null          $fileEncoding
      *
      * @return \Dotenv\Dotenv
      */
@@ -177,8 +160,6 @@ class Dotenv
      *
      * @param string|string[]      $paths
      * @param string|string[]|null $names
-     * @param bool                 $shortCircuit
-     * @param string|null          $fileEncoding
      *
      * @return \Dotenv\Dotenv
      */
@@ -195,10 +176,8 @@ class Dotenv
      * This method behaves just like load(), only without mutating your actual
      * environment. We do this by using an array backed repository.
      *
-     * @param string $content
      *
      * @throws \Dotenv\Exception\InvalidFileException
-     *
      * @return array<string, string|null>
      */
     public static function parse(string $content)
@@ -257,10 +236,8 @@ class Dotenv
      * Returns a new validator object that won't check if the specified variables exist.
      *
      * @param string|string[] $variables
-     *
-     * @return \Dotenv\Validator
      */
-    public function ifPresent($variables)
+    public function ifPresent($variables): \Dotenv\Validator
     {
         return new Validator($this->repository, (array) $variables);
     }

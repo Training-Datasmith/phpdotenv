@@ -12,8 +12,6 @@ final class PutenvAdapter implements AdapterInterface
 {
     /**
      * Create a new putenv adapter instance.
-     *
-     * @return void
      */
     private function __construct()
     {
@@ -37,10 +35,8 @@ final class PutenvAdapter implements AdapterInterface
 
     /**
      * Determines if the adapter is supported.
-     *
-     * @return bool
      */
-    private static function isSupported()
+    private static function isSupported(): bool
     {
         return \function_exists('getenv') && \function_exists('putenv');
     }
@@ -55,7 +51,7 @@ final class PutenvAdapter implements AdapterInterface
     public function read(string $name)
     {
         /** @var \PhpOption\Option<string> */
-        return Option::fromValue(\getenv($name), false)->filter(static function ($value) {
+        return Option::fromValue(\getenv($name), false)->filter(static function ($value): bool {
             return \is_string($value);
         });
     }
@@ -64,11 +60,9 @@ final class PutenvAdapter implements AdapterInterface
      * Write to an environment variable, if possible.
      *
      * @param non-empty-string $name
-     * @param string           $value
      *
-     * @return bool
      */
-    public function write(string $name, string $value)
+    public function write(string $name, string $value): bool
     {
         \putenv("$name=$value");
 
@@ -79,10 +73,8 @@ final class PutenvAdapter implements AdapterInterface
      * Delete an environment variable, if possible.
      *
      * @param non-empty-string $name
-     *
-     * @return bool
      */
-    public function delete(string $name)
+    public function delete(string $name): bool
     {
         \putenv($name);
 

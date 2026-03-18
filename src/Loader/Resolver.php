@@ -16,8 +16,6 @@ final class Resolver
      * This class is a singleton.
      *
      * @codeCoverageIgnore
-     *
-     * @return void
      */
     private function __construct()
     {
@@ -30,14 +28,11 @@ final class Resolver
      * Replaces ${varname} patterns in the allowed positions in the variable
      * value by an existing environment variable.
      *
-     * @param \Dotenv\Repository\RepositoryInterface $repository
-     * @param \Dotenv\Parser\Value                   $value
      *
-     * @return string
      */
-    public static function resolve(RepositoryInterface $repository, Value $value)
+    public static function resolve(RepositoryInterface $repository, Value $value): string
     {
-        return \array_reduce($value->getVars(), static function (string $s, int $i) use ($repository) {
+        return \array_reduce($value->getVars(), static function (string $s, int $i) use ($repository): string {
             return Str::substr($s, 0, $i).self::resolveVariable($repository, Str::substr($s, $i));
         }, $value->getChars());
     }
@@ -45,8 +40,6 @@ final class Resolver
     /**
      * Resolve a single nested variable.
      *
-     * @param \Dotenv\Repository\RepositoryInterface $repository
-     * @param string                                 $str
      *
      * @return string
      */

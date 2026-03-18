@@ -46,10 +46,7 @@ final class StoreBuilder
      *
      * @param string[]    $paths
      * @param string[]    $names
-     * @param bool        $shortCircuit
-     * @param string|null $fileEncoding
      *
-     * @return void
      */
     private function __construct(array $paths = [], array $names = [], bool $shortCircuit = false, ?string $fileEncoding = null)
     {
@@ -61,20 +58,16 @@ final class StoreBuilder
 
     /**
      * Create a new store builder instance with no names.
-     *
-     * @return \Dotenv\Store\StoreBuilder
      */
-    public static function createWithNoNames()
+    public static function createWithNoNames(): self
     {
         return new self();
     }
 
     /**
      * Create a new store builder instance with the default name.
-     *
-     * @return \Dotenv\Store\StoreBuilder
      */
-    public static function createWithDefaultName()
+    public static function createWithDefaultName(): self
     {
         return new self([], [self::DEFAULT_NAME]);
     }
@@ -82,11 +75,9 @@ final class StoreBuilder
     /**
      * Creates a store builder with the given path added.
      *
-     * @param string $path
      *
-     * @return \Dotenv\Store\StoreBuilder
      */
-    public function addPath(string $path)
+    public function addPath(string $path): self
     {
         return new self(\array_merge($this->paths, [$path]), $this->names, $this->shortCircuit, $this->fileEncoding);
     }
@@ -94,21 +85,17 @@ final class StoreBuilder
     /**
      * Creates a store builder with the given name added.
      *
-     * @param string $name
      *
-     * @return \Dotenv\Store\StoreBuilder
      */
-    public function addName(string $name)
+    public function addName(string $name): self
     {
         return new self($this->paths, \array_merge($this->names, [$name]), $this->shortCircuit, $this->fileEncoding);
     }
 
     /**
      * Creates a store builder with short circuit mode enabled.
-     *
-     * @return \Dotenv\Store\StoreBuilder
      */
-    public function shortCircuit()
+    public function shortCircuit(): self
     {
         return new self($this->paths, $this->names, true, $this->fileEncoding);
     }
@@ -116,11 +103,9 @@ final class StoreBuilder
     /**
      * Creates a store builder with the specified file encoding.
      *
-     * @param string|null $fileEncoding
      *
-     * @return \Dotenv\Store\StoreBuilder
      */
-    public function fileEncoding(?string $fileEncoding = null)
+    public function fileEncoding(?string $fileEncoding = null): self
     {
         return new self($this->paths, $this->names, $this->shortCircuit, $fileEncoding);
     }
@@ -130,7 +115,7 @@ final class StoreBuilder
      *
      * @return \Dotenv\Store\StoreInterface
      */
-    public function make()
+    public function make(): \Dotenv\Store\FileStore
     {
         return new FileStore(
             Paths::filePaths($this->paths, $this->names),
