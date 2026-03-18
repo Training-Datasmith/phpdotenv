@@ -14,7 +14,7 @@ final class EnvConstAdapter implements AdapterInterface
      */
     private function __construct()
     {
-        //
+
     }
 
     /**

@@ -8,5 +8,4 @@ use InvalidArgumentException;
 
 final class InvalidEncodingException extends InvalidArgumentException implements ExceptionInterface
 {
-    //
 }

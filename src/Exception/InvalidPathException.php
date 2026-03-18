@@ -8,5 +8,4 @@ use InvalidArgumentException;
 
 final class InvalidPathException extends InvalidArgumentException implements ExceptionInterface
 {
-    //
 }

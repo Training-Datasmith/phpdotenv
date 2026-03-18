@@ -8,5 +8,4 @@ use InvalidArgumentException;
 
 final class InvalidFileException extends InvalidArgumentException implements ExceptionInterface
 {
-    //
 }

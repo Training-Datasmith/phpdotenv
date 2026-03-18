@@ -16,7 +16,7 @@ final class Lines
      */
     private function __construct()
     {
-        //
+
     }
 
     /**

@@ -16,7 +16,7 @@ final class Paths
      */
     private function __construct()
     {
-        //
+
     }
 
     /**
