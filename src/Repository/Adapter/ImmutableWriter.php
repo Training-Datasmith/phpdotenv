@@ -28,6 +28,14 @@ final class ImmutableWriter implements WriterInterface
     private $loaded;
 
     /**
+     * Variables that have been deleted. These cannot be re-written, preventing
+     * a delete() → write() sequence from bypassing immutability.
+     *
+     * @var array<string, true>
+     */
+    private $deleted = [];
+
+    /**
      * Create a new immutable writer instance.
      *
      *
@@ -50,6 +58,12 @@ final class ImmutableWriter implements WriterInterface
         // Don't overwrite existing environment variables
         // Ruby's dotenv does this with `ENV[key] ||= value`
         if ($this->isExternallyDefined($name)) {
+            return false;
+        }
+
+        // Don't allow re-writing a variable that was previously loaded and then deleted.
+        // Without this guard, delete() followed by write() would bypass immutability.
+        if (isset($this->deleted[$name])) {
             return false;
         }
 
@@ -81,7 +95,9 @@ final class ImmutableWriter implements WriterInterface
             return false;
         }
 
-        // Leave the variable as fair game
+        // Record the deletion so the variable cannot be re-written.
+        // This prevents a delete() → write() sequence from bypassing immutability.
+        $this->deleted[$name] = true;
         unset($this->loaded[$name]);
 
         return true;
