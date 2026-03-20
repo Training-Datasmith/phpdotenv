@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Store;
 
-final class StringStore implements StoreInterface
+final class String_Store implements Store_Interface
 {
     /**
      * The file content.
@@ -12,7 +11,6 @@ final class StringStore implements StoreInterface
      * @var string
      */
     private $content;
-
     /**
      * Create a new string store instance.
      *
@@ -22,7 +20,6 @@ final class StringStore implements StoreInterface
     {
         $this->content = $content;
     }
-
     /**
      * Read the content of the environment file(s).
      *

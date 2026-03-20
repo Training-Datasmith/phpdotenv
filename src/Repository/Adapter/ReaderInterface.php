@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Repository\Adapter;
 
-interface ReaderInterface
+interface Reader_Interface
 {
     /**
      * Read an environment variable, if it exists.

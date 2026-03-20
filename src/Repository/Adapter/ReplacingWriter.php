@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Repository\Adapter;
 
-final class ReplacingWriter implements WriterInterface
+final class Replacing_Writer implements Writer_Interface
 {
     /**
      * The inner writer to use.
@@ -12,33 +11,29 @@ final class ReplacingWriter implements WriterInterface
      * @var \Dotenv\Repository\Adapter\WriterInterface
      */
     private $writer;
-
     /**
      * The inner reader to use.
      *
      * @var \Dotenv\Repository\Adapter\ReaderInterface
      */
     private $reader;
-
     /**
      * The record of seen variables.
      *
      * @var array<string, string>
      */
     private $seen;
-
     /**
      * Create a new replacement writer instance.
      *
      *
      */
-    public function __construct(WriterInterface $writer, ReaderInterface $reader)
+    public function __construct(Writer_Interface $writer, Reader_Interface $reader)
     {
         $this->writer = $writer;
         $this->reader = $reader;
         $this->seen = [];
     }
-
     /**
      * Write to an environment variable, if possible.
      *
@@ -51,11 +46,9 @@ final class ReplacingWriter implements WriterInterface
         if ($this->exists($name)) {
             return $this->writer->write($name, $value);
         }
-
         // succeed if nothing to do
         return true;
     }
-
     /**
      * Delete an environment variable, if possible.
      *
@@ -68,11 +61,9 @@ final class ReplacingWriter implements WriterInterface
         if ($this->exists($name)) {
             return $this->writer->delete($name);
         }
-
         // succeed if nothing to do
         return true;
     }
-
     /**
      * Does the given environment variable exist.
      *
@@ -86,13 +77,10 @@ final class ReplacingWriter implements WriterInterface
         if (isset($this->seen[$name])) {
             return true;
         }
-
-        if ($this->reader->read($name)->isDefined()) {
+        if ($this->reader->read($name)->is_defined()) {
             $this->seen[$name] = '';
-
             return true;
         }
-
         return false;
     }
 }

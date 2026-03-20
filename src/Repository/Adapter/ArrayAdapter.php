@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Repository\Adapter;
 
-use PhpOption\Option;
-use PhpOption\Some;
-
-final class ArrayAdapter implements AdapterInterface
+use Php_Option\Option;
+use Php_Option\Some;
+final class Array_Adapter implements Adapter_Interface
 {
     /**
      * The variables and their values.
@@ -15,7 +13,6 @@ final class ArrayAdapter implements AdapterInterface
      * @var array<string, string>
      */
     private $variables;
-
     /**
      * Create a new array adapter instance.
      */
@@ -23,7 +20,6 @@ final class ArrayAdapter implements AdapterInterface
     {
         $this->variables = [];
     }
-
     /**
      * Create a new instance of the adapter, if it is available.
      *
@@ -34,7 +30,6 @@ final class ArrayAdapter implements AdapterInterface
         /** @var \PhpOption\Option<AdapterInterface> */
         return Some::create(new self());
     }
-
     /**
      * Read an environment variable, if it exists.
      *
@@ -44,9 +39,8 @@ final class ArrayAdapter implements AdapterInterface
      */
     public function read(string $name)
     {
-        return Option::fromArraysValue($this->variables, $name);
+        return Option::from_arrays_value($this->variables, $name);
     }
-
     /**
      * Write to an environment variable, if possible.
      *
@@ -56,10 +50,8 @@ final class ArrayAdapter implements AdapterInterface
     public function write(string $name, string $value): bool
     {
         $this->variables[$name] = $value;
-
         return true;
     }
-
     /**
      * Delete an environment variable, if possible.
      *
@@ -68,7 +60,6 @@ final class ArrayAdapter implements AdapterInterface
     public function delete(string $name): bool
     {
         unset($this->variables[$name]);
-
         return true;
     }
 }

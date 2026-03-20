@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Repository;
 
-interface RepositoryInterface
+interface Repository_Interface
 {
     /**
      * Determine if the given environment variable is defined.
@@ -13,7 +12,6 @@ interface RepositoryInterface
      * @return bool
      */
     public function has(string $name);
-
     /**
      * Get an environment variable.
      *
@@ -22,7 +20,6 @@ interface RepositoryInterface
      * @return string|null
      */
     public function get(string $name);
-
     /**
      * Set an environment variable.
      *
@@ -32,7 +29,6 @@ interface RepositoryInterface
      * @return bool
      */
     public function set(string $name, string $value);
-
     /**
      * Clear an environment variable.
      *

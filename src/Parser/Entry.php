@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Parser;
 
-use PhpOption\Option;
-
+use Php_Option\Option;
 final class Entry
 {
     /**
@@ -14,14 +12,12 @@ final class Entry
      * @var string
      */
     private $name;
-
     /**
      * The entry value.
      *
      * @var \Dotenv\Parser\Value|null
      */
     private $value;
-
     /**
      * Create a new entry instance.
      *
@@ -32,25 +28,23 @@ final class Entry
         $this->name = $name;
         $this->value = $value;
     }
-
     /**
      * Get the entry name.
      *
      * @return string
      */
-    public function getName()
+    public function get_name()
     {
         return $this->name;
     }
-
     /**
      * Get the entry value.
      *
      * @return \PhpOption\Option<\Dotenv\Parser\Value>
      */
-    public function getValue()
+    public function get_value()
     {
         /** @var \PhpOption\Option<\Dotenv\Parser\Value> */
-        return Option::fromValue($this->value);
+        return Option::from_value($this->value);
     }
 }

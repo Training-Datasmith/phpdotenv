@@ -1,12 +1,10 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Repository\Adapter;
 
-use PhpOption\None;
-
-final class MultiReader implements ReaderInterface
+use Php_Option\None;
+final class Multi_Reader implements Reader_Interface
 {
     /**
      * The set of readers to use.
@@ -14,7 +12,6 @@ final class MultiReader implements ReaderInterface
      * @var \Dotenv\Repository\Adapter\ReaderInterface[]
      */
     private $readers;
-
     /**
      * Create a new multi-reader instance.
      *
@@ -24,7 +21,6 @@ final class MultiReader implements ReaderInterface
     {
         $this->readers = $readers;
     }
-
     /**
      * Read an environment variable, if it exists.
      *
@@ -36,11 +32,10 @@ final class MultiReader implements ReaderInterface
     {
         foreach ($this->readers as $reader) {
             $result = $reader->read($name);
-            if ($result->isDefined()) {
+            if ($result->is_defined()) {
                 return $result;
             }
         }
-
         return None::create();
     }
 }

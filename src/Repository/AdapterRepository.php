@@ -1,14 +1,12 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Repository;
 
-use Dotenv\Repository\Adapter\ReaderInterface;
-use Dotenv\Repository\Adapter\WriterInterface;
+use Dotenv\Repository\Adapter\Reader_Interface;
+use Dotenv\Repository\Adapter\Writer_Interface;
 use InvalidArgumentException;
-
-final class AdapterRepository implements RepositoryInterface
+final class Adapter_Repository implements Repository_Interface
 {
     /**
      * The reader to use.
@@ -16,25 +14,22 @@ final class AdapterRepository implements RepositoryInterface
      * @var \Dotenv\Repository\Adapter\ReaderInterface
      */
     private $reader;
-
     /**
      * The writer to use.
      *
      * @var \Dotenv\Repository\Adapter\WriterInterface
      */
     private $writer;
-
     /**
      * Create a new adapter repository instance.
      *
      *
      */
-    public function __construct(ReaderInterface $reader, WriterInterface $writer)
+    public function __construct(Reader_Interface $reader, Writer_Interface $writer)
     {
         $this->reader = $reader;
         $this->writer = $writer;
     }
-
     /**
      * Determine if the given environment variable is defined.
      *
@@ -42,9 +37,8 @@ final class AdapterRepository implements RepositoryInterface
      */
     public function has(string $name): bool
     {
-        return '' !== $name && $this->reader->read($name)->isDefined();
+        return '' !== $name && $this->reader->read($name)->is_defined();
     }
-
     /**
      * Get an environment variable.
      *
@@ -57,10 +51,8 @@ final class AdapterRepository implements RepositoryInterface
         if ('' === $name) {
             throw new InvalidArgumentException('Expected name to be a non-empty string.');
         }
-
-        return $this->reader->read($name)->getOrElse(null);
+        return $this->reader->read($name)->get_or_else(null);
     }
-
     /**
      * Set an environment variable.
      *
@@ -74,10 +66,8 @@ final class AdapterRepository implements RepositoryInterface
         if ('' === $name) {
             throw new InvalidArgumentException('Expected name to be a non-empty string.');
         }
-
         return $this->writer->write($name, $value);
     }
-
     /**
      * Clear an environment variable.
      *
@@ -90,7 +80,6 @@ final class AdapterRepository implements RepositoryInterface
         if ('' === $name) {
             throw new InvalidArgumentException('Expected name to be a non-empty string.');
         }
-
         return $this->writer->delete($name);
     }
 }

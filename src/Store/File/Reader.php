@@ -1,13 +1,11 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Store\File;
 
-use Dotenv\Exception\InvalidEncodingException;
+use Dotenv\Exception\Invalid_Encoding_Exception;
 use Dotenv\Util\Str;
-use PhpOption\Option;
-
+use Php_Option\Option;
 /**
  * @internal
  */
@@ -20,9 +18,7 @@ final class Reader
      */
     private function __construct()
     {
-
     }
-
     /**
      * Read the file(s), and return their raw content.
      *
@@ -36,23 +32,20 @@ final class Reader
      *
      * @return array<string, string>
      */
-    public static function read(array $filePaths, bool $shortCircuit = true, ?string $fileEncoding = null): array
+    public static function read(array $file_paths, bool $short_circuit = true, ?string $file_encoding = null): array
     {
         $output = [];
-
-        foreach ($filePaths as $filePath) {
-            $content = self::readFromFile($filePath, $fileEncoding);
-            if ($content->isDefined()) {
-                $output[$filePath] = $content->get();
-                if ($shortCircuit) {
+        foreach ($file_paths as $file_path) {
+            $content = self::read_from_file($file_path, $file_encoding);
+            if ($content->is_defined()) {
+                $output[$file_path] = $content->get();
+                if ($short_circuit) {
                     break;
                 }
             }
         }
-
         return $output;
     }
-
     /**
      * Read the given file.
      *
@@ -61,14 +54,13 @@ final class Reader
      *
      * @return \PhpOption\Option<string>
      */
-    private static function readFromFile(string $path, ?string $encoding = null)
+    private static function read_from_file(string $path, ?string $encoding = null)
     {
         /** @var Option<string> */
-        $content = Option::fromValue(@\file_get_contents($path), false);
-
-        return $content->flatMap(static function (string $content) use ($encoding) {
-            return Str::utf8($content, $encoding)->mapError(static function (string $error): void {
-                throw new InvalidEncodingException($error);
+        $content = Option::from_value(@\file_get_contents($path), false);
+        return $content->flat_map(static function (string $content) use ($encoding) {
+            return Str::utf8($content, $encoding)->map_error(static function (string $error): void {
+                throw new Invalid_Encoding_Exception($error);
             })->success();
         });
     }

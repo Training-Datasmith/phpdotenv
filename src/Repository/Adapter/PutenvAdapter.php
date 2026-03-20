@@ -1,23 +1,19 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Repository\Adapter;
 
-use PhpOption\None;
-use PhpOption\Option;
-use PhpOption\Some;
-
-final class PutenvAdapter implements AdapterInterface
+use Php_Option\None;
+use Php_Option\Option;
+use Php_Option\Some;
+final class Putenv_Adapter implements Adapter_Interface
 {
     /**
      * Create a new putenv adapter instance.
      */
     private function __construct()
     {
-
     }
-
     /**
      * Create a new instance of the adapter, if it is available.
      *
@@ -25,22 +21,19 @@ final class PutenvAdapter implements AdapterInterface
      */
     public static function create()
     {
-        if (self::isSupported()) {
+        if (self::is_supported()) {
             /** @var \PhpOption\Option<AdapterInterface> */
             return Some::create(new self());
         }
-
         return None::create();
     }
-
     /**
      * Determines if the adapter is supported.
      */
-    private static function isSupported(): bool
+    private static function is_supported(): bool
     {
         return \function_exists('getenv') && \function_exists('putenv');
     }
-
     /**
      * Read an environment variable, if it exists.
      *
@@ -51,11 +44,10 @@ final class PutenvAdapter implements AdapterInterface
     public function read(string $name)
     {
         /** @var \PhpOption\Option<string> */
-        return Option::fromValue(\getenv($name), false)->filter(static function ($value): bool {
+        return Option::from_value(\getenv($name), false)->filter(static function ($value): bool {
             return \is_string($value);
         });
     }
-
     /**
      * Write to an environment variable, if possible.
      *
@@ -64,11 +56,9 @@ final class PutenvAdapter implements AdapterInterface
      */
     public function write(string $name, string $value): bool
     {
-        \putenv("$name=$value");
-
+        \putenv("{$name}={$value}");
         return true;
     }
-
     /**
      * Delete an environment variable, if possible.
      *
@@ -77,7 +67,6 @@ final class PutenvAdapter implements AdapterInterface
     public function delete(string $name): bool
     {
         \putenv($name);
-
         return true;
     }
 }

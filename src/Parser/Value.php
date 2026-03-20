@@ -1,11 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Parser;
 
 use Dotenv\Util\Str;
-
 final class Value
 {
     /**
@@ -14,14 +12,12 @@ final class Value
      * @var string
      */
     private $chars;
-
     /**
      * The locations of the variables in the value.
      *
      * @var int[]
      */
     private $vars;
-
     /**
      * Internal constructor for a value.
      *
@@ -33,7 +29,6 @@ final class Value
         $this->chars = $chars;
         $this->vars = $vars;
     }
-
     /**
      * Create an empty value instance.
      */
@@ -41,7 +36,6 @@ final class Value
     {
         return new self('', []);
     }
-
     /**
      * Create a new value instance, appending the characters.
      *
@@ -49,33 +43,26 @@ final class Value
      */
     public function append(string $chars, bool $var): self
     {
-        return new self(
-            $this->chars.$chars,
-            $var ? \array_merge($this->vars, [Str::len($this->chars)]) : $this->vars
-        );
+        return new self($this->chars . $chars, $var ? \array_merge($this->vars, [Str::len($this->chars)]) : $this->vars);
     }
-
     /**
      * Get the string representation of the parsed value.
      *
      * @return string
      */
-    public function getChars()
+    public function get_chars()
     {
         return $this->chars;
     }
-
     /**
      * Get the locations of the variables in the value.
      *
      * @return int[]
      */
-    public function getVars()
+    public function get_vars()
     {
         $vars = $this->vars;
-
         \rsort($vars);
-
         return $vars;
     }
 }

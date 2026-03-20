@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Store\File;
 
 /**
@@ -16,9 +15,7 @@ final class Paths
      */
     private function __construct()
     {
-
     }
-
     /**
      * Returns the full paths to the files.
      *
@@ -27,16 +24,14 @@ final class Paths
      *
      * @return string[]
      */
-    public static function filePaths(array $paths, array $names): array
+    public static function file_paths(array $paths, array $names): array
     {
         $files = [];
-
         foreach ($paths as $path) {
             foreach ($names as $name) {
-                $files[] = \rtrim($path, \DIRECTORY_SEPARATOR).\DIRECTORY_SEPARATOR.$name;
+                $files[] = \rtrim($path, \DIRECTORY_SEPARATOR) . \DIRECTORY_SEPARATOR . $name;
             }
         }
-
         return $files;
     }
 }

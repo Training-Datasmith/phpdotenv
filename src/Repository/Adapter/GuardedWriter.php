@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Repository\Adapter;
 
-final class GuardedWriter implements WriterInterface
+final class Guarded_Writer implements Writer_Interface
 {
     /**
      * The inner writer to use.
@@ -12,26 +11,23 @@ final class GuardedWriter implements WriterInterface
      * @var \Dotenv\Repository\Adapter\WriterInterface
      */
     private $writer;
-
     /**
      * The variable name allow list.
      *
      * @var string[]
      */
-    private $allowList;
-
+    private $allow_list;
     /**
      * Create a new guarded writer instance.
      *
      * @param string[]                                   $allowList
      *
      */
-    public function __construct(WriterInterface $writer, array $allowList)
+    public function __construct(Writer_Interface $writer, array $allow_list)
     {
         $this->writer = $writer;
-        $this->allowList = $allowList;
+        $this->allow_list = $allow_list;
     }
-
     /**
      * Write to an environment variable, if possible.
      *
@@ -42,14 +38,12 @@ final class GuardedWriter implements WriterInterface
     public function write(string $name, string $value)
     {
         // Don't set non-allowed variables
-        if (!$this->isAllowed($name)) {
+        if (!$this->is_allowed($name)) {
             return false;
         }
-
         // Set the value on the inner writer
         return $this->writer->write($name, $value);
     }
-
     /**
      * Delete an environment variable, if possible.
      *
@@ -60,21 +54,19 @@ final class GuardedWriter implements WriterInterface
     public function delete(string $name)
     {
         // Don't clear non-allowed variables
-        if (!$this->isAllowed($name)) {
+        if (!$this->is_allowed($name)) {
             return false;
         }
-
         // Set the value on the inner writer
         return $this->writer->delete($name);
     }
-
     /**
      * Determine if the given variable is allowed.
      *
      * @param non-empty-string $name
      */
-    private function isAllowed(string $name): bool
+    private function is_allowed(string $name): bool
     {
-        return \in_array($name, $this->allowList, true);
+        return \in_array($name, $this->allow_list, true);
     }
 }

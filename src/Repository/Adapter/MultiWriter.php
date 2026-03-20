@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Repository\Adapter;
 
-final class MultiWriter implements WriterInterface
+final class Multi_Writer implements Writer_Interface
 {
     /**
      * The set of writers to use.
@@ -12,7 +11,6 @@ final class MultiWriter implements WriterInterface
      * @var \Dotenv\Repository\Adapter\WriterInterface[]
      */
     private $writers;
-
     /**
      * Create a new multi-writer instance.
      *
@@ -22,7 +20,6 @@ final class MultiWriter implements WriterInterface
     {
         $this->writers = $writers;
     }
-
     /**
      * Write to an environment variable, if possible.
      *
@@ -36,10 +33,8 @@ final class MultiWriter implements WriterInterface
                 return false;
             }
         }
-
         return true;
     }
-
     /**
      * Delete an environment variable, if possible.
      *
@@ -52,7 +47,6 @@ final class MultiWriter implements WriterInterface
                 return false;
             }
         }
-
         return true;
     }
 }

@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Store;
 
-interface StoreInterface
+interface Store_Interface
 {
     /**
      * Read the content of the environment file(s).

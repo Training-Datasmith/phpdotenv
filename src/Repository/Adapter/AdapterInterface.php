@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Repository\Adapter;
 
-interface AdapterInterface extends ReaderInterface, WriterInterface
+interface Adapter_Interface extends Reader_Interface, Writer_Interface
 {
     /**
      * Create a new instance of the adapter, if it is available.

@@ -1,10 +1,9 @@
 <?php
 
-declare(strict_types=1);
-
+declare (strict_types=1);
 namespace Dotenv\Parser;
 
-interface ParserInterface
+interface Parser_Interface
 {
     /**
      * Parse content into an entry array.
