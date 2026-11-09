@@ -127,18 +127,6 @@ parameters:
 			path: src/Repository/Adapter/Server_Const_Adapter.php
 
 		-
-			message: '#^Method Dotenv\\Repository\\Repository_Builder\:\:allow_list\(\) has parameter \$allow_list with no value type specified in iterable type array\.$#'
-			identifier: missingType.iterableValue
-			count: 1
-			path: src/Repository/Repository_Builder.php
-
-		-
-			message: '#^PHPDoc tag @param references unknown parameter\: \$allowList$#'
-			identifier: parameter.notFound
-			count: 1
-			path: src/Repository/Repository_Builder.php
-
-		-
 			message: '#^PHPDoc tag @return with type Dotenv\\Repository\\Repository_Interface is not subtype of native type Dotenv\\Repository\\Adapter_Repository\.$#'
 			identifier: return.phpDocType
 			count: 1
@@ -172,12 +160,6 @@ parameters:
 			message: '#^Parameter \#2 \$writers of class Dotenv\\Repository\\Repository_Builder constructor expects array\<Dotenv\\Repository\\Adapter\\Writer_Interface\>, array\<Dotenv\\Repository\\Adapter\\Writer_Interface\|S\> given\.$#'
 			identifier: argument.type
 			count: 2
-			path: src/Repository/Repository_Builder.php
-
-		-
-			message: '#^Parameter \#4 \$allow_list of class Dotenv\\Repository\\Repository_Builder constructor expects array\<string\>\|null, array\|null given\.$#'
-			identifier: argument.type
-			count: 1
 			path: src/Repository/Repository_Builder.php
 
 		-

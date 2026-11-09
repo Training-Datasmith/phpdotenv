@@ -177,7 +177,7 @@ final class Repository_Builder
     /**
      * Creates a repository builder with the given allow list.
      *
-     * @param string[]|null $allowList
+     * @param string[]|null $allow_list
      */
     public function allow_list(?array $allow_list = null): self
     {

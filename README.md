@@ -134,7 +134,7 @@ $s3_bucket = $_SERVER['S3_BUCKET'];
 Using `getenv()` and `putenv()` is strongly discouraged due to the fact that
 these functions are not thread safe, however it is still possible to instruct
 PHP dotenv to use these functions. Instead of calling
-`Dotenv::create_immutable`, one can call `Dotenv::createUnsafeImmutable`, which
+`Dotenv::create_immutable`, one can call `Dotenv::create_unsafe_immutable`, which
 will add the `Putenv_Adapter` behind the scenes. Your environment variables will
 now be available using the `getenv` method, as well as the super-globals:
 
@@ -195,7 +195,7 @@ allow listed. That is, only the variables in the allow list will be loaded:
 
 ```php
 $repository = Dotenv\Repository\Repository_Builder::create_with_default_adapters()
-    ->allowList(['FOO', 'BAR'])
+    ->allow_list(['FOO', 'BAR'])
     ->make();
 
 $dotenv = Dotenv\Dotenv::create($repository, __DIR__);

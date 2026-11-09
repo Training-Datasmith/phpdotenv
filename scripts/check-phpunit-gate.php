@@ -29,23 +29,58 @@ if ($baseline === '') {
 $raw = (string) file_get_contents($logPath);
 $stripped = preg_replace('/\x1b\[[0-9;]*[[:alpha:]]/', '', $raw) ?? $raw;
 
-if (preg_match('/(^|[[:space:]])(PHP[[:space:]]+)?(Warning|Deprecated|Notice):/m', $stripped)) {
-    fwrite(STDERR, "PHPUnit output contains Warning, Deprecated, or Notice.\n");
-    exit(1);
-}
+/**
+ * @param list<string> $allowed
+ * @return list<string>
+ */
+function validate_skip_policy(string $stripped, string $baseline, array $allowed): array
+{
+    $errors = [];
 
-$okFound = false;
-foreach (explode("\n", $stripped) as $line) {
-    $trim = trim($line);
-    if ($trim === $baseline) {
-        $okFound = true;
-        break;
+    foreach (explode("\n", $stripped) as $line) {
+        if (preg_match('/^(PHP )?(Warning|Deprecated|Notice):/', $line)) {
+            $errors[] = 'output contains Warning, Deprecated, or Notice line';
+            break;
+        }
     }
-}
 
-if (!$okFound) {
-    fwrite(STDERR, "PHPUnit missing exact baseline success line: {$baseline}\n");
-    exit(1);
+    $okFound = false;
+    foreach (explode("\n", $stripped) as $line) {
+        if (preg_match('/^' . preg_quote($baseline, '/') . '\s*$/', $line)) {
+            $okFound = true;
+            break;
+        }
+    }
+    if (!$okFound) {
+        $errors[] = "missing exact baseline success line: {$baseline}";
+    }
+
+    foreach (explode("\n", $stripped) as $line) {
+        $trim = trim($line);
+        if ($trim !== ''
+            && preg_match('/ skipped$/', $trim)
+            && !preg_match('/::/', $trim)) {
+            $errors[] = 'unexpected PHPUnit skip summary in output';
+            break;
+        }
+    }
+
+    if (preg_match_all('/^\s*([A-Za-z0-9_\\\\]+::[A-Za-z0-9_]+)\s+skipped/m', $stripped, $skipLines)) {
+        foreach ($skipLines[1] as $skip) {
+            if (!in_array($skip, $allowed, true)) {
+                $errors[] = "unlisted skipped test: {$skip}";
+            }
+        }
+    }
+
+    foreach ($allowed as $required) {
+        $pattern = '/^\s*' . preg_quote($required, '/') . '\s+skipped/m';
+        if (!preg_match($pattern, $stripped)) {
+            $errors[] = "missing listed skip: {$required}";
+        }
+    }
+
+    return $errors;
 }
 
 /** @var list<string> $allowed */
@@ -59,47 +94,31 @@ if (is_readable($allowedSkipsPath)) {
     }
 }
 
-if (preg_match_all('/^.* skipped$/m', $stripped, $skipSummary) && $skipSummary[0] !== []) {
-    fwrite(STDERR, "Unexpected PHPUnit skip summary in output.\n");
-    exit(1);
-}
-
-if (preg_match_all('/^\s*([A-Za-z0-9_\\\\]+::[A-Za-z0-9_]+)\s+skipped/m', $stripped, $skipLines)) {
-    foreach ($skipLines[1] as $skip) {
-        if (!in_array($skip, $allowed, true)) {
-            fwrite(STDERR, "Unlisted skipped test: {$skip}\n");
-            exit(1);
-        }
+$policyErrors = validate_skip_policy($stripped, $baseline, $allowed);
+if ($policyErrors !== []) {
+    foreach ($policyErrors as $error) {
+        fwrite(STDERR, $error . "\n");
     }
+    exit(1);
 }
 
 // In-memory skip-policy demos (no vendor/ writes).
-$demoOutputUnlisted = "OK (1 test, 1 assertion)\nDotenv\\Tests\\Demo::test_unlisted skipped\n";
-$demoAllowedMissing = "OK (1 test, 1 assertion)\n";
-$allowedDemo = ['Dotenv\\Tests\\Demo::test_listed'];
+$demoBaseline = 'OK (1 test, 1 assertion)';
+$demoOutputUnlisted = "{$demoBaseline}\nDotenv\\Tests\\Demo::test_unlisted skipped\n";
+$demoAllowedMissing = "{$demoBaseline}\n";
+$demoListedSkip = "{$demoBaseline}\nDotenv\\Tests\\Demo::test_listed skipped\n";
+$allowOne = ['Dotenv\\Tests\\Demo::test_listed'];
 
-function demo_skip_gate(string $output, string $baseline, array $allowed): array
-{
-    $errors = [];
-    if (preg_match_all('/^\s*([A-Za-z0-9_\\\\]+::[A-Za-z0-9_]+)\s+skipped/m', $output, $skipLines)) {
-        foreach ($skipLines[1] as $skip) {
-            if (!in_array($skip, $allowed, true)) {
-                $errors[] = $skip;
-            }
-        }
-    }
-
-    return $errors;
-}
-
-if (demo_skip_gate($demoOutputUnlisted, $baseline, $allowedDemo) === []) {
+if (validate_skip_policy($demoOutputUnlisted, $demoBaseline, $allowOne) === []) {
     fwrite(STDERR, "Skip demo failed: unlisted skip must be rejected.\n");
     exit(1);
 }
-if (demo_skip_gate($demoAllowedMissing, $baseline, ['Dotenv\\Tests\\Demo::test_listed']) === []) {
-    // missing listed skip is fine; demo checks that absent skip does not false-positive as unlisted
-} else {
-    fwrite(STDERR, "Skip demo failed: missing listed skip treated as error incorrectly.\n");
+if (validate_skip_policy($demoAllowedMissing, $demoBaseline, $allowOne) === []) {
+    fwrite(STDERR, "Skip demo failed: missing listed skip must be rejected.\n");
+    exit(1);
+}
+if (validate_skip_policy($demoListedSkip, $demoBaseline, $allowOne) !== []) {
+    fwrite(STDERR, "Skip demo failed: listed skip must be accepted.\n");
     exit(1);
 }
 

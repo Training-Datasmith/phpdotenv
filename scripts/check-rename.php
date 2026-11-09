@@ -69,15 +69,36 @@ function collect_php_files(string $dir): array
     return $files;
 }
 
-function is_allowlisted_from_value_site(string $relFile, string $line): bool
+/**
+ * Option::fromValue is allowed only inside Str::pos.
+ *
+ * @return list<string>
+ */
+function check_str_from_value_usage(string $rel, string $content): array
 {
-    return $relFile === 'src/Util/Str.php'
-        && preg_match('/\bfunction\s+pos\s*\(/', $line) === 1;
+    if ($rel !== 'src/Util/Str.php') {
+        return [];
+    }
+    $errors = [];
+    $inPos = false;
+    foreach (explode("\n", $content) as $i => $line) {
+        $lineNo = $i + 1;
+        if (preg_match('/function\s+pos\s*\(/', $line)) {
+            $inPos = true;
+        } elseif ($inPos && preg_match('/\bfunction\s+\w+\s*\(/', $line) && !preg_match('/function\s+pos\s*\(/', $line)) {
+            $inPos = false;
+        }
+        if (strpos($line, 'fromValue') !== false && !$inPos) {
+            $errors[] = "{$rel}:{$lineNo} fromValue outside allowlisted Str::pos site";
+        }
+    }
+
+    return $errors;
 }
 
 function scan_text(string $rel, string $content, array $staleSubstrings): array
 {
-    $errors = [];
+    $errors = check_str_from_value_usage($rel, $content);
     foreach (explode("\n", $content) as $i => $line) {
         $lineNo = $i + 1;
         foreach ($staleSubstrings as $stale) {
@@ -98,6 +119,9 @@ function scan_text(string $rel, string $content, array $staleSubstrings): array
                 $errors[] = "{$rel}:{$lineNo} test/class name must be Studly_Snake: {$class}";
             }
         }
+        if (preg_match('/@param[^\n]*\$allowList\b/', $line)) {
+            $errors[] = "{$rel}:{$lineNo} stale doc param name: \$allowList";
+        }
     }
 
     return $errors;
@@ -105,13 +129,29 @@ function scan_text(string $rel, string $content, array $staleSubstrings): array
 
 function run_allowlisted_upstream_demo(): void
 {
-    $goodLine = '    public static function pos(string $haystack, string $needle) { return Option::fromValue(1); }';
-    $badLine = '    public static function len(string $input) { return Option::fromValue(1); }';
-    if (!is_allowlisted_from_value_site('src/Util/Str.php', $goodLine)) {
+    $goodSnippet = <<<'PHP'
+final class Str
+{
+    public static function pos(string $haystack, string $needle)
+    {
+        return Option::fromValue(1, false);
+    }
+}
+PHP;
+    $badSnippet = <<<'PHP'
+final class Str
+{
+    public static function len(string $input): int
+    {
+        return Option::fromValue(1, false)->get();
+    }
+}
+PHP;
+    if (check_str_from_value_usage('src/Util/Str.php', $goodSnippet) !== []) {
         fwrite(STDERR, "check-rename: allowlist demo failed (listed site rejected).\n");
         exit(1);
     }
-    if (is_allowlisted_from_value_site('src/Util/Str.php', $badLine)) {
+    if (check_str_from_value_usage('src/Util/Str.php', $badSnippet) === []) {
         fwrite(STDERR, "check-rename: allowlist demo failed (unlisted site accepted).\n");
         exit(1);
     }
@@ -138,7 +178,21 @@ foreach (['README.md', 'UPGRADING.md', 'ARCHITECTURE.md'] as $md) {
         if (strpos($line, '`') === false && strpos($line, '::') === false) {
             continue;
         }
-        foreach (['createImmutable', 'createMutable', 'RepositoryBuilder', 'StoreBuilder', 'safeLoad', 'notEmpty', 'allowedValues', 'ifPresent', 'isInteger', 'isBoolean'] as $stale) {
+        foreach ([
+            'createImmutable',
+            'createMutable',
+            'createUnsafeImmutable',
+            'createUnsafeMutable',
+            'RepositoryBuilder',
+            'StoreBuilder',
+            'safeLoad',
+            'notEmpty',
+            'allowedValues',
+            'ifPresent',
+            'isInteger',
+            'isBoolean',
+            'allowList',
+        ] as $stale) {
             if (strpos($line, $stale) !== false) {
                 $errors[] = "{$md}:" . ($i + 1) . " stale docs reference: {$stale}";
             }

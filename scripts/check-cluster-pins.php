@@ -29,6 +29,12 @@ $packagistOnly = [
             'Training-Datasmith/phpunit',
             'Training-Datasmith',
         ],
+        'forbidden_references' => [
+            '178d8180c34087830dbcdb5e67fa8b61d28016ac',
+            '2cecae254e4ffc2c20ac379c5cd23d91c82109df',
+            '698cbbc1e75a1ef1968f9cbfec89be056b288d0f',
+            'a37d66fabf01af0eedabffe271b70dbe71723001',
+        ],
     ],
 ];
 
@@ -171,10 +177,24 @@ function verify_packagist_phpunit_installed_php(array $packagistOnly, array $ver
     }
     $pkg = $versions['phpunit/phpunit'];
     $policy = $packagistOnly['phpunit/phpunit'];
+    $pretty = (string) ($pkg['pretty_version'] ?? ($pkg['version'] ?? ''));
+    if ($pretty !== '' && version_compare($pretty, $policy['min_version'], '<')) {
+        $errors[] = sprintf(
+            'phpunit/phpunit version %s is below minimum %s (installed.php).',
+            $pretty,
+            $policy['min_version']
+        );
+    }
     $reference = strtolower((string) ($pkg['reference'] ?? ''));
-    foreach ($expectedCluster = ['178d8180c34087830dbcdb5e67fa8b61d28016ac', '2cecae254e4ffc2c20ac379c5cd23d91c82109df'] as $clusterRef) {
-        if ($reference === strtolower($clusterRef)) {
+    foreach ($policy['forbidden_references'] as $forbiddenRef) {
+        if ($reference === strtolower($forbiddenRef)) {
             $errors[] = 'phpunit/phpunit must not resolve from the composer-index (installed.php reference).';
+        }
+    }
+    $serialized = strtolower(json_encode($pkg) ?: '');
+    foreach ($policy['forbidden_urls'] as $needle) {
+        if (strpos($serialized, strtolower($needle)) !== false) {
+            $errors[] = 'phpunit/phpunit must not be installed from Training-Datasmith (installed.php).';
         }
     }
 
@@ -209,9 +229,9 @@ function verify_packagist_phpunit_installed_json(array $packagistOnly, string $i
             }
         }
         $reference = strtolower((string) ($package['source']['reference'] ?? ''));
-        foreach (['178d8180c34087830dbcdb5e67fa8b61d28016ac', '2cecae254e4ffc2c20ac379c5cd23d91c82109df'] as $clusterRef) {
-            if ($reference === strtolower($clusterRef)) {
-                $errors[] = 'phpunit/phpunit must not use a cluster index SHA (installed.json).';
+        foreach ($packagistOnly['phpunit/phpunit']['forbidden_references'] as $forbiddenRef) {
+            if ($reference === strtolower($forbiddenRef)) {
+                $errors[] = 'phpunit/phpunit must not use a forbidden index SHA (installed.json).';
             }
         }
     }
@@ -233,17 +253,6 @@ function run_wrong_sha_demos(array $expected): void
             'aliases' => [$expected['symfony/polyfill-mbstring']['alias']],
         ],
     ];
-
-    $badPhpVersions = $goodVersions;
-    $badPhpVersions['symfony/polyfill-ctype']['reference'] = $badReference;
-    $phpErrors = verify_installed_php($expected, $badPhpVersions);
-    if ($phpErrors === []) {
-        fail_checks('wrong-SHA demo (installed.php) did not fail.');
-    }
-    $phpOk = verify_installed_php($expected, $goodVersions);
-    if ($phpOk !== []) {
-        fail_checks('wrong-SHA demo (installed.php) broke good map: ' . implode(' ', $phpOk));
-    }
 
     $goodJson = [
         'packages' => [
@@ -268,15 +277,37 @@ function run_wrong_sha_demos(array $expected): void
         ],
         'packages-dev' => [],
     ];
-    $badJson = $goodJson;
-    $badJson['packages'][0]['source']['reference'] = $badReference;
     $tmpGood = tempnam(sys_get_temp_dir(), 'installed-good-');
     $tmpBad = tempnam(sys_get_temp_dir(), 'installed-bad-');
     if ($tmpGood === false || $tmpBad === false) {
         fail_checks('could not create temp files for wrong-SHA demos.');
     }
     file_put_contents($tmpGood, json_encode($goodJson));
+    $badJson = $goodJson;
+    $badJson['packages'][0]['source']['reference'] = $badReference;
     file_put_contents($tmpBad, json_encode($badJson));
+
+    $badPhpVersions = $goodVersions;
+    $badPhpVersions['symfony/polyfill-ctype']['reference'] = $badReference;
+    $phpErrors = verify_installed_php($expected, $badPhpVersions);
+    if ($phpErrors === []) {
+        @unlink($tmpGood);
+        @unlink($tmpBad);
+        fail_checks('wrong-SHA demo (installed.php) did not fail.');
+    }
+    $phpOk = verify_installed_php($expected, $goodVersions);
+    if ($phpOk !== []) {
+        @unlink($tmpGood);
+        @unlink($tmpBad);
+        fail_checks('wrong-SHA demo (installed.php) broke good map: ' . implode(' ', $phpOk));
+    }
+    $jsonCrossAfterPhp = verify_installed_json($expected, $tmpGood);
+    if ($jsonCrossAfterPhp !== []) {
+        @unlink($tmpGood);
+        @unlink($tmpBad);
+        fail_checks('wrong-SHA demo (installed.php): installed.json good map must still pass: ' . implode(' ', $jsonCrossAfterPhp));
+    }
+
     $jsonErrors = verify_installed_json($expected, $tmpBad);
     if ($jsonErrors === []) {
         @unlink($tmpGood);
@@ -288,6 +319,12 @@ function run_wrong_sha_demos(array $expected): void
         @unlink($tmpGood);
         @unlink($tmpBad);
         fail_checks('wrong-SHA demo (installed.json) broke good map: ' . implode(' ', $jsonOk));
+    }
+    $phpCrossAfterJson = verify_installed_php($expected, $goodVersions);
+    if ($phpCrossAfterJson !== []) {
+        @unlink($tmpGood);
+        @unlink($tmpBad);
+        fail_checks('wrong-SHA demo (installed.json): installed.php good map must still pass: ' . implode(' ', $phpCrossAfterJson));
     }
     @unlink($tmpGood);
     @unlink($tmpBad);
