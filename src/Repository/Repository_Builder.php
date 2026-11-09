@@ -13,24 +13,24 @@ use Dotenv\Repository\Adapter\Reader_Interface;
 use Dotenv\Repository\Adapter\Server_Const_Adapter;
 use Dotenv\Repository\Adapter\Writer_Interface;
 use InvalidArgumentException;
-use Php_Option\Some;
+use PhpOption\Some;
 use ReflectionClass;
 final class Repository_Builder
 {
     /**
      * The set of default adapters.
      */
-    private const DEFAULT_ADAPTERS = [Server_Const_Adapter::class, Env_Const_Adapter::class];
+    private const default_adapters = [Server_Const_Adapter::class, Env_Const_Adapter::class];
     /**
      * The set of readers to use.
      *
-     * @var \Dotenv\Repository\Adapter\ReaderInterface[]
+     * @var \Dotenv\Repository\Adapter\Reader_Interface[]
      */
     private $readers;
     /**
      * The set of writers to use.
      *
-     * @var \Dotenv\Repository\Adapter\WriterInterface[]
+     * @var \Dotenv\Repository\Adapter\Writer_Interface[]
      */
     private $writers;
     /**
@@ -48,9 +48,9 @@ final class Repository_Builder
     /**
      * Create a new repository builder instance.
      *
-     * @param \Dotenv\Repository\Adapter\ReaderInterface[] $readers
-     * @param \Dotenv\Repository\Adapter\WriterInterface[] $writers
-     * @param string[]|null                                $allowList
+     * @param \Dotenv\Repository\Adapter\Reader_Interface[] $readers
+     * @param \Dotenv\Repository\Adapter\Writer_Interface[] $writers
+     * @param string[]|null                                $allow_list
      *
      */
     private function __construct(array $readers = [], array $writers = [], bool $immutable = false, ?array $allow_list = null)
@@ -78,13 +78,13 @@ final class Repository_Builder
     /**
      * Return the array of default adapters.
      *
-     * @return \Generator<\Dotenv\Repository\Adapter\AdapterInterface>
+     * @return \Generator<\Dotenv\Repository\Adapter\Adapter_Interface>
      */
     private static function default_adapters()
     {
-        foreach (self::DEFAULT_ADAPTERS as $adapter) {
+        foreach (self::default_adapters as $adapter) {
             $instance = $adapter::create();
-            if ($instance->is_defined()) {
+            if ($instance->isDefined()) {
                 yield $instance->get();
             }
         }
@@ -100,7 +100,7 @@ final class Repository_Builder
         if (!\class_exists($name)) {
             return false;
         }
-        return (new ReflectionClass($name))->implements_interface(Adapter_Interface::class);
+        return (new ReflectionClass($name))->implementsInterface(Adapter_Interface::class);
     }
     /**
      * Creates a repository builder with the given reader added.
@@ -108,7 +108,7 @@ final class Repository_Builder
      * Accepts either a reader instance, or a class-string for an adapter. If
      * the adapter is not supported, then we silently skip adding it.
      *
-     * @param \Dotenv\Repository\Adapter\ReaderInterface|string $reader
+     * @param \Dotenv\Repository\Adapter\Reader_Interface|string $reader
      *
      * @throws \InvalidArgumentException
      */
@@ -117,7 +117,7 @@ final class Repository_Builder
         if (!(\is_string($reader) && self::is_an_adapter_class($reader)) && !$reader instanceof Reader_Interface) {
             throw new InvalidArgumentException(\sprintf('Expected either an instance of %s or a class-string implementing %s', Reader_Interface::class, Adapter_Interface::class));
         }
-        $optional = Some::create($reader)->flat_map(static function ($reader) {
+        $optional = Some::create($reader)->flatMap(static function ($reader) {
             return \is_string($reader) ? $reader::create() : Some::create($reader);
         });
         $readers = \array_merge($this->readers, \iterator_to_array($optional));
@@ -129,7 +129,7 @@ final class Repository_Builder
      * Accepts either a writer instance, or a class-string for an adapter. If
      * the adapter is not supported, then we silently skip adding it.
      *
-     * @param \Dotenv\Repository\Adapter\WriterInterface|string $writer
+     * @param \Dotenv\Repository\Adapter\Writer_Interface|string $writer
      *
      * @throws \InvalidArgumentException
      */
@@ -138,7 +138,7 @@ final class Repository_Builder
         if (!(\is_string($writer) && self::is_an_adapter_class($writer)) && !$writer instanceof Writer_Interface) {
             throw new InvalidArgumentException(\sprintf('Expected either an instance of %s or a class-string implementing %s', Writer_Interface::class, Adapter_Interface::class));
         }
-        $optional = Some::create($writer)->flat_map(static function ($writer) {
+        $optional = Some::create($writer)->flatMap(static function ($writer) {
             return \is_string($writer) ? $writer::create() : Some::create($writer);
         });
         $writers = \array_merge($this->writers, \iterator_to_array($optional));
@@ -151,7 +151,7 @@ final class Repository_Builder
      * the adapter is not supported, then we silently skip adding it. We will
      * add the adapter as both a reader and a writer.
      *
-     * @param \Dotenv\Repository\Adapter\WriterInterface|string $adapter
+     * @param \Dotenv\Repository\Adapter\Writer_Interface|string $adapter
      *
      * @throws \InvalidArgumentException
      */
@@ -160,7 +160,7 @@ final class Repository_Builder
         if (!(\is_string($adapter) && self::is_an_adapter_class($adapter)) && !$adapter instanceof Adapter_Interface) {
             throw new InvalidArgumentException(\sprintf('Expected either an instance of %s or a class-string implementing %s', Writer_Interface::class, Adapter_Interface::class));
         }
-        $optional = Some::create($adapter)->flat_map(static function ($adapter) {
+        $optional = Some::create($adapter)->flatMap(static function ($adapter) {
             return \is_string($adapter) ? $adapter::create() : Some::create($adapter);
         });
         $readers = \array_merge($this->readers, \iterator_to_array($optional));
@@ -186,7 +186,7 @@ final class Repository_Builder
     /**
      * Creates a new repository instance.
      *
-     * @return \Dotenv\Repository\RepositoryInterface
+     * @return \Dotenv\Repository\Repository_Interface
      */
     public function make(): \Dotenv\Repository\Adapter_Repository
     {

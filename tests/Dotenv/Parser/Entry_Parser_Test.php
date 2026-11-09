@@ -5,180 +5,180 @@ declare(strict_types=1);
 namespace Dotenv\Tests\Parser;
 
 use Dotenv\Parser\Entry;
-use Dotenv\Parser\EntryParser;
+use Dotenv\Parser\Entry_Parser;
 use Dotenv\Parser\Value;
 use GrahamCampbell\ResultType\Result;
 use PHPUnit\Framework\TestCase;
 
-final class EntryParserTest extends TestCase
+final class Entry_Parser_Test extends TestCase
 {
-    public function testBasicParse()
+    public function test_basic_parse()
     {
-        $result = EntryParser::parse('FOO=BAR');
-        $this->checkPositiveResult($result, 'FOO', 'BAR');
+        $result = Entry_Parser::parse('FOO=BAR');
+        $this->check_positive_result($result, 'FOO', 'BAR');
     }
 
-    public function testNullParse()
+    public function test_null_parse()
     {
-        $result = EntryParser::parse('FOO');
-        $this->checkEmptyResult($result, 'FOO');
+        $result = Entry_Parser::parse('FOO');
+        $this->check_empty_result($result, 'FOO');
     }
 
-    public function testUnicodeNameParse()
+    public function test_unicode_name_parse()
     {
-        $result = EntryParser::parse('FOOƱ=BAZ');
-        $this->checkPositiveResult($result, 'FOOƱ', 'BAZ');
+        $result = Entry_Parser::parse('FOOƱ=BAZ');
+        $this->check_positive_result($result, 'FOOƱ', 'BAZ');
     }
 
-    public function testQuotesParse()
+    public function test_quotes_parse()
     {
-        $result = EntryParser::parse("FOO=\"BAR  \n\"");
-        $this->checkPositiveResult($result, 'FOO', "BAR  \n");
+        $result = Entry_Parser::parse("FOO=\"BAR  \n\"");
+        $this->check_positive_result($result, 'FOO', "BAR  \n");
     }
 
-    public function testNewlineParse()
+    public function test_newline_parse()
     {
-        $result = EntryParser::parse('FOO="\n"');
-        $this->checkPositiveResult($result, 'FOO', "\n");
+        $result = Entry_Parser::parse('FOO="\n"');
+        $this->check_positive_result($result, 'FOO', "\n");
     }
 
-    public function testTabParseDouble()
+    public function test_tab_parse_double()
     {
-        $result = EntryParser::parse('FOO="\t"');
-        $this->checkPositiveResult($result, 'FOO', "\t");
+        $result = Entry_Parser::parse('FOO="\t"');
+        $this->check_positive_result($result, 'FOO', "\t");
     }
 
-    public function testTabParseSingle()
+    public function test_tab_parse_single()
     {
-        $result = EntryParser::parse('FOO=\'\t\'');
-        $this->checkPositiveResult($result, 'FOO', '\t');
+        $result = Entry_Parser::parse('FOO=\'\t\'');
+        $this->check_positive_result($result, 'FOO', '\t');
     }
 
-    public function testNonEscapeParse1()
+    public function test_non_escape_parse1()
     {
-        $result = EntryParser::parse('FOO=\n\v');
-        $this->checkPositiveResult($result, 'FOO', '\n\v');
+        $result = Entry_Parser::parse('FOO=\n\v');
+        $this->check_positive_result($result, 'FOO', '\n\v');
     }
 
-    public function testNonEscapeParse2()
+    public function test_non_escape_parse2()
     {
-        $result = EntryParser::parse('FOO=\q');
-        $this->checkPositiveResult($result, 'FOO', '\q');
+        $result = Entry_Parser::parse('FOO=\q');
+        $this->check_positive_result($result, 'FOO', '\q');
     }
 
-    public function testBadEscapeParse()
+    public function test_bad_escape_parse()
     {
-        $result = EntryParser::parse('FOO="\q"');
-        $this->checkErrorResult($result, 'Encountered an unexpected escape sequence at ["\q"].');
+        $result = Entry_Parser::parse('FOO="\q"');
+        $this->check_error_result($result, 'Encountered an unexpected escape sequence at ["\q"].');
     }
 
-    public function testInlineVariable()
+    public function test_inline_variable()
     {
-        $result = EntryParser::parse('FOO=$BAR');
-        $this->checkPositiveResult($result, 'FOO', '$BAR', [0]);
+        $result = Entry_Parser::parse('FOO=$BAR');
+        $this->check_positive_result($result, 'FOO', '$BAR', [0]);
     }
 
-    public function testInlineVariableOffset()
+    public function test_inline_variable_offset()
     {
-        $result = EntryParser::parse('FOO=AAA$BAR');
-        $this->checkPositiveResult($result, 'FOO', 'AAA$BAR', [3]);
+        $result = Entry_Parser::parse('FOO=AAA$BAR');
+        $this->check_positive_result($result, 'FOO', 'AAA$BAR', [3]);
     }
 
-    public function testInlineVariables()
+    public function test_inline_variables()
     {
-        $result = EntryParser::parse('FOO="TEST $BAR $$BAZ"');
-        $this->checkPositiveResult($result, 'FOO', 'TEST $BAR $$BAZ', [11, 10, 5]);
+        $result = Entry_Parser::parse('FOO="TEST $BAR $$BAZ"');
+        $this->check_positive_result($result, 'FOO', 'TEST $BAR $$BAZ', [11, 10, 5]);
     }
 
-    public function testNonInlineVariable()
+    public function test_non_inline_variable()
     {
-        $result = EntryParser::parse('FOO=\'TEST $BAR $$BAZ\'');
-        $this->checkPositiveResult($result, 'FOO', 'TEST $BAR $$BAZ');
+        $result = Entry_Parser::parse('FOO=\'TEST $BAR $$BAZ\'');
+        $this->check_positive_result($result, 'FOO', 'TEST $BAR $$BAZ');
         self::assertTrue($result->success()->isDefined());
     }
 
-    public function testWhitespaceParse()
+    public function test_whitespace_parse()
     {
-        $result = EntryParser::parse("FOO=\"\n\"");
-        $this->checkPositiveResult($result, 'FOO', "\n");
+        $result = Entry_Parser::parse("FOO=\"\n\"");
+        $this->check_positive_result($result, 'FOO', "\n");
     }
 
-    public function testExportParse()
+    public function test_export_parse()
     {
-        $result = EntryParser::parse('export FOO="bar baz"');
-        $this->checkPositiveResult($result, 'FOO', 'bar baz');
+        $result = Entry_Parser::parse('export FOO="bar baz"');
+        $this->check_positive_result($result, 'FOO', 'bar baz');
     }
 
-    public function testExportParseTab()
+    public function test_export_parse_tab()
     {
-        $result = EntryParser::parse("export\t\"FOO\"='bar baz'");
-        $this->checkPositiveResult($result, 'FOO', 'bar baz');
+        $result = Entry_Parser::parse("export\t\"FOO\"='bar baz'");
+        $this->check_positive_result($result, 'FOO', 'bar baz');
     }
 
-    public function testExportParseFail()
+    public function test_export_parse_fail()
     {
-        $result = EntryParser::parse('export "FOO="bar baz"');
-        $this->checkErrorResult($result, 'Encountered an invalid name at ["FOO].');
+        $result = Entry_Parser::parse('export "FOO="bar baz"');
+        $this->check_error_result($result, 'Encountered an invalid name at ["FOO].');
     }
 
-    public function testClosingSlashParse()
+    public function test_closing_slash_parse()
     {
-        $result = EntryParser::parse('SPVAR5="test some escaped characters like a quote \\" or maybe a backslash \\\\" # not escaped');
-        $this->checkPositiveResult($result, 'SPVAR5', 'test some escaped characters like a quote " or maybe a backslash \\');
+        $result = Entry_Parser::parse('SPVAR5="test some escaped characters like a quote \\" or maybe a backslash \\\\" # not escaped');
+        $this->check_positive_result($result, 'SPVAR5', 'test some escaped characters like a quote " or maybe a backslash \\');
     }
 
-    public function testParseInvalidSpaces()
+    public function test_parse_invalid_spaces()
     {
-        $result = EntryParser::parse('FOO=bar baz');
-        $this->checkErrorResult($result, 'Encountered unexpected whitespace at [bar baz].');
+        $result = Entry_Parser::parse('FOO=bar baz');
+        $this->check_error_result($result, 'Encountered unexpected whitespace at [bar baz].');
     }
 
-    public function testParseStrayEquals()
+    public function test_parse_stray_equals()
     {
-        $result = EntryParser::parse('=');
-        $this->checkErrorResult($result, 'Encountered an unexpected equals at [=].');
+        $result = Entry_Parser::parse('=');
+        $this->check_error_result($result, 'Encountered an unexpected equals at [=].');
     }
 
-    public function testParseInvalidName()
+    public function test_parse_invalid_name()
     {
-        $result = EntryParser::parse('FOO_ASD!=BAZ');
-        $this->checkErrorResult($result, 'Encountered an invalid name at [FOO_ASD!].');
+        $result = Entry_Parser::parse('FOO_ASD!=BAZ');
+        $this->check_error_result($result, 'Encountered an invalid name at [FOO_ASD!].');
     }
 
-    public function testParserEscapingDouble()
+    public function test_parser_escaping_double()
     {
-        $result = EntryParser::parse('FOO_BAD="iiiiviiiixiiiiviiii\\a"');
-        $this->checkErrorResult($result, 'Encountered an unexpected escape sequence at ["iiiiviiiixiiiiviiii\a"].');
+        $result = Entry_Parser::parse('FOO_BAD="iiiiviiiixiiiiviiii\\a"');
+        $this->check_error_result($result, 'Encountered an unexpected escape sequence at ["iiiiviiiixiiiiviiii\a"].');
     }
 
-    public function testParserEscapingSingle()
+    public function test_parser_escaping_single()
     {
-        $result = EntryParser::parse('FOO_BAD=\'iiiiviiiixiiiiviiii\\a\'');
-        $this->checkPositiveResult($result, 'FOO_BAD', 'iiiiviiiixiiiiviiii\\a');
+        $result = Entry_Parser::parse('FOO_BAD=\'iiiiviiiixiiiiviiii\\a\'');
+        $this->check_positive_result($result, 'FOO_BAD', 'iiiiviiiixiiiiviiii\\a');
     }
 
-    public function testParserMissingClosingSingleQuote()
+    public function test_parser_missing_closing_single_quote()
     {
-        $result = EntryParser::parse('TEST=\'erert');
-        $this->checkErrorResult($result, 'Encountered a missing closing quote at [\'erert].');
+        $result = Entry_Parser::parse('TEST=\'erert');
+        $this->check_error_result($result, 'Encountered a missing closing quote at [\'erert].');
     }
 
-    public function testParserMissingClosingDoubleQuote()
+    public function test_parser_missing_closing_double_quote()
     {
-        $result = EntryParser::parse('TEST="erert');
-        $this->checkErrorResult($result, 'Encountered a missing closing quote at ["erert].');
+        $result = Entry_Parser::parse('TEST="erert');
+        $this->check_error_result($result, 'Encountered a missing closing quote at ["erert].');
     }
 
-    public function testParserMissingClosingQuotes()
+    public function test_parser_missing_closing_quotes()
     {
-        $result = EntryParser::parse("TEST=\"erert\nTEST='erert\n");
-        $this->checkErrorResult($result, 'Encountered a missing closing quote at ["erert].');
+        $result = Entry_Parser::parse("TEST=\"erert\nTEST='erert\n");
+        $this->check_error_result($result, 'Encountered a missing closing quote at ["erert].');
     }
 
-    public function testParserClosingQuoteWithEscape()
+    public function test_parser_closing_quote_with_escape()
     {
-        $result = EntryParser::parse('TEST="\\');
-        $this->checkErrorResult($result, 'Encountered a missing closing quote at ["\\].');
+        $result = Entry_Parser::parse('TEST="\\');
+        $this->check_error_result($result, 'Encountered a missing closing quote at ["\\].');
     }
 
     /**
@@ -189,19 +189,19 @@ final class EntryParserTest extends TestCase
      *
      * @return void
      */
-    private function checkPositiveResult(Result $result, string $name, string $chars, array $vars = [])
+    private function check_positive_result(Result $result, string $name, string $chars, array $vars = [])
     {
         self::assertTrue($result->success()->isDefined());
 
         $entry = $result->success()->get();
         self::assertInstanceOf(Entry::class, $entry);
-        self::assertSame($name, $entry->getName());
-        self::assertTrue($entry->getValue()->isDefined());
+        self::assertSame($name, $entry->get_name());
+        self::assertTrue($entry->get_value()->isDefined());
 
-        $value = $entry->getValue()->get();
+        $value = $entry->get_value()->get();
         self::assertInstanceOf(Value::class, $value);
-        self::assertSame($chars, $value->getChars());
-        self::assertSame($vars, $value->getVars());
+        self::assertSame($chars, $value->get_chars());
+        self::assertSame($vars, $value->get_vars());
     }
 
     /**
@@ -210,14 +210,14 @@ final class EntryParserTest extends TestCase
      *
      * @return void
      */
-    private function checkEmptyResult(Result $result, string $name)
+    private function check_empty_result(Result $result, string $name)
     {
         self::assertTrue($result->success()->isDefined());
 
         $entry = $result->success()->get();
         self::assertInstanceOf(Entry::class, $entry);
-        self::assertSame('FOO', $entry->getName());
-        self::assertFalse($entry->getValue()->isDefined());
+        self::assertSame('FOO', $entry->get_name());
+        self::assertFalse($entry->get_value()->isDefined());
     }
 
     /**
@@ -226,7 +226,7 @@ final class EntryParserTest extends TestCase
      *
      * @return void
      */
-    private function checkErrorResult(Result $result, string $error)
+    private function check_error_result(Result $result, string $error)
     {
         self::assertTrue($result->error()->isDefined());
         self::assertSame($error, $result->error()->get());

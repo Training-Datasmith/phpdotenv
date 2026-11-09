@@ -3,7 +3,7 @@
 declare (strict_types=1);
 namespace Dotenv\Parser;
 
-use Php_Option\Option;
+use PhpOption\Option;
 final class Entry
 {
     /**
@@ -45,6 +45,6 @@ final class Entry
     public function get_value()
     {
         /** @var \PhpOption\Option<\Dotenv\Parser\Value> */
-        return Option::from_value($this->value);
+        return Option::fromValue($this->value);
     }
 }

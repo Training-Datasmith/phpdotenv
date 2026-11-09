@@ -8,7 +8,7 @@ final class Guarded_Writer implements Writer_Interface
     /**
      * The inner writer to use.
      *
-     * @var \Dotenv\Repository\Adapter\WriterInterface
+     * @var \Dotenv\Repository\Adapter\Writer_Interface
      */
     private $writer;
     /**
@@ -20,7 +20,7 @@ final class Guarded_Writer implements Writer_Interface
     /**
      * Create a new guarded writer instance.
      *
-     * @param string[]                                   $allowList
+     * @param string[]                                   $allow_list
      *
      */
     public function __construct(Writer_Interface $writer, array $allow_list)

@@ -3,9 +3,9 @@
 declare (strict_types=1);
 namespace Dotenv\Util;
 
-use Graham_Campbell\Result_Type\Error;
-use Graham_Campbell\Result_Type\Success;
-use Php_Option\Option;
+use GrahamCampbell\ResultType\Error;
+use GrahamCampbell\ResultType\Success;
+use PhpOption\Option;
 /**
  * @internal
  */
@@ -56,7 +56,7 @@ final class Str
     public static function pos(string $haystack, string $needle)
     {
         /** @var \PhpOption\Option<int> */
-        return Option::from_value(\mb_strpos($haystack, $needle, 0, 'UTF-8'), false);
+        return Option::fromValue(\mb_strpos($haystack, $needle, 0, 'UTF-8'), false);
     }
     /**
      * Grab the specified substring of the input.

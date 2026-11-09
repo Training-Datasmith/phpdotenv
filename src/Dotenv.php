@@ -20,25 +20,25 @@ class Dotenv
     /**
      * The store instance.
      *
-     * @var \Dotenv\Store\StoreInterface
+     * @var \Dotenv\Store\Store_Interface
      */
     private $store;
     /**
      * The parser instance.
      *
-     * @var \Dotenv\Parser\ParserInterface
+     * @var \Dotenv\Parser\Parser_Interface
      */
     private $parser;
     /**
      * The loader instance.
      *
-     * @var \Dotenv\Loader\LoaderInterface
+     * @var \Dotenv\Loader\Loader_Interface
      */
     private $loader;
     /**
      * The repository instance.
      *
-     * @var \Dotenv\Repository\RepositoryInterface
+     * @var \Dotenv\Repository\Repository_Interface
      */
     private $repository;
     /**
@@ -146,7 +146,7 @@ class Dotenv
      * environment. We do this by using an array backed repository.
      *
      *
-     * @throws \Dotenv\Exception\InvalidFileException
+     * @throws \Dotenv\Exception\Invalid_File_Exception
      * @return array<string, string|null>
      */
     public static function parse(string $content)
@@ -158,7 +158,7 @@ class Dotenv
     /**
      * Read and load environment file(s).
      *
-     * @throws \Dotenv\Exception\InvalidPathException|\Dotenv\Exception\InvalidEncodingException|\Dotenv\Exception\InvalidFileException
+     * @throws \Dotenv\Exception\Invalid_Path_Exception|\Dotenv\Exception\Invalid_Encoding_Exception|\Dotenv\Exception\Invalid_File_Exception
      *
      * @return array<string, string|null>
      */
@@ -170,7 +170,7 @@ class Dotenv
     /**
      * Read and load environment file(s), silently failing if no files can be read.
      *
-     * @throws \Dotenv\Exception\InvalidEncodingException|\Dotenv\Exception\InvalidFileException
+     * @throws \Dotenv\Exception\Invalid_Encoding_Exception|\Dotenv\Exception\Invalid_File_Exception
      *
      * @return array<string, string|null>
      */

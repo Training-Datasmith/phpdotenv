@@ -11,13 +11,13 @@ final class Adapter_Repository implements Repository_Interface
     /**
      * The reader to use.
      *
-     * @var \Dotenv\Repository\Adapter\ReaderInterface
+     * @var \Dotenv\Repository\Adapter\Reader_Interface
      */
     private $reader;
     /**
      * The writer to use.
      *
-     * @var \Dotenv\Repository\Adapter\WriterInterface
+     * @var \Dotenv\Repository\Adapter\Writer_Interface
      */
     private $writer;
     /**
@@ -37,7 +37,7 @@ final class Adapter_Repository implements Repository_Interface
      */
     public function has(string $name): bool
     {
-        return '' !== $name && $this->reader->read($name)->is_defined();
+        return '' !== $name && $this->reader->read($name)->isDefined();
     }
     /**
      * Get an environment variable.
@@ -51,7 +51,7 @@ final class Adapter_Repository implements Repository_Interface
         if ('' === $name) {
             throw new InvalidArgumentException('Expected name to be a non-empty string.');
         }
-        return $this->reader->read($name)->get_or_else(null);
+        return $this->reader->read($name)->getOrElse(null);
     }
     /**
      * Set an environment variable.

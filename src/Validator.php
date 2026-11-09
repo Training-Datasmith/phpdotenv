@@ -12,7 +12,7 @@ class Validator
     /**
      * The environment repository instance.
      *
-     * @var \Dotenv\Repository\RepositoryInterface
+     * @var \Dotenv\Repository\Repository_Interface
      */
     private $repository;
     /**
@@ -35,7 +35,7 @@ class Validator
     /**
      * Assert that each variable is present.
      *
-     * @throws \Dotenv\Exception\ValidationException
+     * @throws \Dotenv\Exception\Validation_Exception
      *
      * @return \Dotenv\Validator
      */
@@ -48,7 +48,7 @@ class Validator
     /**
      * Assert that each variable is not empty.
      *
-     * @throws \Dotenv\Exception\ValidationException
+     * @throws \Dotenv\Exception\Validation_Exception
      *
      * @return \Dotenv\Validator
      */
@@ -61,7 +61,7 @@ class Validator
     /**
      * Assert that each specified variable is an integer.
      *
-     * @throws \Dotenv\Exception\ValidationException
+     * @throws \Dotenv\Exception\Validation_Exception
      *
      * @return \Dotenv\Validator
      */
@@ -74,7 +74,7 @@ class Validator
     /**
      * Assert that each specified variable is a boolean.
      *
-     * @throws \Dotenv\Exception\ValidationException
+     * @throws \Dotenv\Exception\Validation_Exception
      *
      * @return \Dotenv\Validator
      */
@@ -92,7 +92,7 @@ class Validator
      *
      * @param string[] $choices
      *
-     * @throws \Dotenv\Exception\ValidationException
+     * @throws \Dotenv\Exception\Validation_Exception
      *
      * @return \Dotenv\Validator
      */
@@ -106,13 +106,13 @@ class Validator
      * Assert that each variable matches the given regular expression.
      *
      *
-     * @throws \Dotenv\Exception\ValidationException
+     * @throws \Dotenv\Exception\Validation_Exception
      * @return \Dotenv\Validator
      */
     public function allowed_regex_values(string $regex)
     {
         return $this->assert_nullable(static function (string $value) use ($regex) {
-            return Regex::matches($regex, $value)->success()->get_or_else(false);
+            return Regex::matches($regex, $value)->success()->getOrElse(false);
         }, \sprintf('does not match "%s"', $regex));
     }
     /**
@@ -120,7 +120,7 @@ class Validator
      *
      * @param callable(?string):bool $callback
      *
-     * @throws \Dotenv\Exception\ValidationException
+     * @throws \Dotenv\Exception\Validation_Exception
      *
      */
     public function assert(callable $callback, string $message): self
@@ -143,7 +143,7 @@ class Validator
      *
      * @param callable(string):bool $callback
      *
-     * @throws \Dotenv\Exception\ValidationException
+     * @throws \Dotenv\Exception\Validation_Exception
      * @return \Dotenv\Validator
      */
     public function assert_nullable(callable $callback, string $message)

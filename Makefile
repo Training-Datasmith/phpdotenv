@@ -1,15 +1,11 @@
 install:
-	@docker run -it -w /data -v ${PWD}:/data:delegated -v ~/.composer:/root/.composer:delegated --entrypoint composer --rm registry.gitlab.com/grahamcampbell/php:8.5-base update
-	@docker run -it -w /data -v ${PWD}:/data:delegated -v ~/.composer:/root/.composer:delegated --entrypoint composer --rm registry.gitlab.com/grahamcampbell/php:8.5-base bin all update
+	@echo "Use: bash scripts/system-test.sh (digest-pinned Docker)"
 
 phpunit:
-	@docker run -it -w /data -v ${PWD}:/data:delegated --entrypoint vendor/bin/phpunit --rm registry.gitlab.com/grahamcampbell/php:8.5-cli
+	@bash scripts/system-test.sh
 
 phpstan-analyze:
-	@docker run -it -w /data -v ${PWD}:/data:delegated --entrypoint vendor/bin/phpstan --rm registry.gitlab.com/grahamcampbell/php:8.5-cli analyze
-
-phpstan-baseline:
-	@docker run -it -w /data -v ${PWD}:/data:delegated --entrypoint vendor/bin/phpstan --rm registry.gitlab.com/grahamcampbell/php:8.5-cli analyze --generate-baseline
+	@bash scripts/system-test-phpstan.sh
 
 test: phpunit phpstan-analyze
 

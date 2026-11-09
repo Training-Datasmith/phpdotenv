@@ -3,8 +3,8 @@
 declare (strict_types=1);
 namespace Dotenv\Util;
 
-use Graham_Campbell\Result_Type\Error;
-use Graham_Campbell\Result_Type\Success;
+use GrahamCampbell\ResultType\Error;
+use GrahamCampbell\ResultType\Success;
 /**
  * @internal
  */

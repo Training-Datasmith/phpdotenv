@@ -9,7 +9,7 @@ final class Lexer
     /**
      * The regex for each type of token.
      */
-    private const PATTERNS = [
+    private const patterns = [
         '[\r\n]{1,1000}', '[^\S\r\n]{1,1000}', '\\\\', '\'', '"', '\\#', '\\$', '([^(\s\\\\\'"\\#\\$)]|\\(|\\)){1,1000}',
     ];
 
@@ -37,7 +37,7 @@ final class Lexer
         static $regex;
 
         if ($regex === null) {
-            $regex = '(('.\implode(')|(', self::PATTERNS).'))A';
+            $regex = '(('.\implode(')|(', self::patterns).'))A';
         }
 
         $offset = 0;

@@ -9,7 +9,7 @@ final class Store_Builder
     /**
      * The of default name.
      */
-    private const DEFAULT_NAME = '.env';
+    private const default_name = '.env';
     /**
      * The paths to search within.
      *
@@ -60,7 +60,7 @@ final class Store_Builder
      */
     public static function create_with_default_name(): self
     {
-        return new self([], [self::DEFAULT_NAME]);
+        return new self([], [self::default_name]);
     }
     /**
      * Creates a store builder with the given path added.
@@ -99,7 +99,7 @@ final class Store_Builder
     /**
      * Creates a new store instance.
      *
-     * @return \Dotenv\Store\StoreInterface
+     * @return \Dotenv\Store\Store_Interface
      */
     public function make(): \Dotenv\Store\File_Store
     {

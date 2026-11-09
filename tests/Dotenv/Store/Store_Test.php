@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Dotenv\Tests\Store;
 
-use Dotenv\Exception\InvalidEncodingException;
+use Dotenv\Exception\Invalid_Encoding_Exception;
 use Dotenv\Store\File\Paths;
 use Dotenv\Store\File\Reader;
-use Dotenv\Store\StoreBuilder;
+use Dotenv\Store\Store_Builder;
 use PHPUnit\Framework\TestCase;
 
-final class StoreTest extends TestCase
+final class Store_Test extends TestCase
 {
     /**
      * @var string
@@ -22,27 +22,27 @@ final class StoreTest extends TestCase
      *
      * @return void
      */
-    public static function setFolder()
+    public static function set_folder()
     {
         self::$folder = \dirname(\dirname(__DIR__)).'/fixtures/env';
     }
 
-    public function testBasicReadDirect()
+    public function test_basic_read_direct()
     {
         self::assertSame(
             [
                 self::$folder.\DIRECTORY_SEPARATOR.'.env' => "FOO=bar\nBAR=baz\nSPACED=\"with spaces\"\n\nNULL=\n",
             ],
             Reader::read(
-                Paths::filePaths([self::$folder], ['.env'])
+                Paths::file_paths([self::$folder], ['.env'])
             )
         );
     }
 
-    public function testBasicRead()
+    public function test_basic_read()
     {
-        $builder = StoreBuilder::createWithDefaultName()
-            ->addPath(self::$folder);
+        $builder = Store_Builder::create_with_default_name()
+            ->add_path(self::$folder);
 
         self::assertSame(
             "FOO=bar\nBAR=baz\nSPACED=\"with spaces\"\n\nNULL=\n",
@@ -50,12 +50,12 @@ final class StoreTest extends TestCase
         );
     }
 
-    public function testBasicReadWindowsEncoding()
+    public function test_basic_read_windows_encoding()
     {
-        $builder = StoreBuilder::createWithNoNames()
-            ->addPath(self::$folder)
-            ->addName('windows.env')
-            ->fileEncoding('Windows-1252');
+        $builder = Store_Builder::create_with_no_names()
+            ->add_path(self::$folder)
+            ->add_name('windows.env')
+            ->file_encoding('Windows-1252');
 
         self::assertSame(
             "MBW=\"ñá\"\n",
@@ -63,38 +63,38 @@ final class StoreTest extends TestCase
         );
     }
 
-    public function testBasicReadBadEncoding()
+    public function test_basic_read_bad_encoding()
     {
-        $builder = StoreBuilder::createWithNoNames()
-            ->addPath(self::$folder)
-            ->addName('windows.env')
-            ->fileEncoding('Windowss-1252');
+        $builder = Store_Builder::create_with_no_names()
+            ->add_path(self::$folder)
+            ->add_name('windows.env')
+            ->file_encoding('Windowss-1252');
 
-        $this->expectException(InvalidEncodingException::class);
+        $this->expectException(Invalid_Encoding_Exception::class);
         $this->expectExceptionMessage('Illegal character encoding [Windowss-1252] specified.');
 
         $builder->make()->read();
     }
 
-    public function testFileReadMultipleShortCircuitModeDirect()
+    public function test_file_read_multiple_short_circuit_mode_direct()
     {
         self::assertSame(
             [
                 self::$folder.\DIRECTORY_SEPARATOR.'.env' => "FOO=bar\nBAR=baz\nSPACED=\"with spaces\"\n\nNULL=\n",
             ],
             Reader::read(
-                Paths::filePaths([self::$folder], ['.env', 'example.env'])
+                Paths::file_paths([self::$folder], ['.env', 'example.env'])
             )
         );
     }
 
-    public function testFileReadMultipleShortCircuitMode()
+    public function test_file_read_multiple_short_circuit_mode()
     {
-        $builder = StoreBuilder::createWithNoNames()
-            ->addPath(self::$folder)
-            ->addName('.env')
-            ->addName('example.env')
-            ->shortCircuit();
+        $builder = Store_Builder::create_with_no_names()
+            ->add_path(self::$folder)
+            ->add_name('.env')
+            ->add_name('example.env')
+            ->short_circuit();
 
         self::assertSame(
             "FOO=bar\nBAR=baz\nSPACED=\"with spaces\"\n\nNULL=\n",
@@ -102,7 +102,7 @@ final class StoreTest extends TestCase
         );
     }
 
-    public function testFileReadMultipleWithoutShortCircuitModeDirect()
+    public function test_file_read_multiple_without_short_circuit_mode_direct()
     {
         self::assertSame(
             [
@@ -110,31 +110,31 @@ final class StoreTest extends TestCase
                 self::$folder.\DIRECTORY_SEPARATOR.'example.env' => "EG=\"example\"\n",
             ],
             Reader::read(
-                Paths::filePaths([self::$folder], ['.env', 'example.env']),
+                Paths::file_paths([self::$folder], ['.env', 'example.env']),
                 false
             )
         );
     }
 
-    public function testFileReadMultipleWithoutShortCircuitMode()
+    public function test_file_read_multiple_without_short_circuit_mode()
     {
-        $builder = StoreBuilder::createWithDefaultName()
-            ->addPath(self::$folder)
-            ->addName('example.env');
+        $builder = Store_Builder::create_with_default_name()
+            ->add_path(self::$folder)
+            ->add_name('example.env');
 
         self::assertSame(
             "FOO=bar\nBAR=baz\nSPACED=\"with spaces\"\n\nNULL=\n\nEG=\"example\"\n",
             $builder->make()->read()
         );
     }
-    public function testFileReadWithUtf8WithBomEncoding()
+    public function test_file_read_with_utf8_with_bom_encoding()
     {
         self::assertSame(
             [
                 self::$folder.\DIRECTORY_SEPARATOR.'utf8-with-bom-encoding.env' => "FOO=bar\nBAR=baz\nSPACED=\"with spaces\"\n",
             ],
             Reader::read(
-                Paths::filePaths([self::$folder], ['utf8-with-bom-encoding.env'])
+                Paths::file_paths([self::$folder], ['utf8-with-bom-encoding.env'])
             )
         );
     }

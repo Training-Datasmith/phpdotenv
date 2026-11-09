@@ -5,28 +5,28 @@ declare(strict_types=1);
 namespace Dotenv\Tests\Repository;
 
 use Dotenv\Dotenv;
-use Dotenv\Repository\Adapter\ArrayAdapter;
-use Dotenv\Repository\RepositoryBuilder;
-use Dotenv\Repository\RepositoryInterface;
+use Dotenv\Repository\Adapter\Array_Adapter;
+use Dotenv\Repository\Repository_Builder;
+use Dotenv\Repository\Repository_Interface;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use TypeError;
 
-final class RepositoryTest extends TestCase
+final class Repository_Test extends TestCase
 {
     /**
      * @var array<string, string>|null
      */
-    private $keyVal;
+    private $key_val;
 
     /**
      * @before
      *
      * @return void
      */
-    public function refreshKeyVal()
+    public function refresh_key_val()
     {
-        $this->keyVal(true);
+        $this->key_val(true);
     }
 
     /**
@@ -34,7 +34,7 @@ final class RepositoryTest extends TestCase
      */
     private function load()
     {
-        Dotenv::createMutable(\dirname(\dirname(__DIR__)).'/fixtures/env')->load();
+        Dotenv::create_mutable(\dirname(\dirname(__DIR__)).'/fixtures/env')->load();
     }
 
     /**
@@ -48,49 +48,49 @@ final class RepositoryTest extends TestCase
      *
      * @return array<string, string>
      */
-    private function keyVal(bool $reset = false)
+    private function key_val(bool $reset = false)
     {
-        if (!isset($this->keyVal) || $reset) {
-            $this->keyVal = [\uniqid() => \uniqid()];
+        if (!isset($this->key_val) || $reset) {
+            $this->key_val = [\uniqid() => \uniqid()];
         }
 
-        return $this->keyVal;
+        return $this->key_val;
     }
 
     /**
-     * Returns the key from keyVal(), without reset.
+     * Returns the key from key_val(), without reset.
      *
      * @return string
      */
     private function key()
     {
-        $keyVal = $this->keyVal();
+        $key_val = $this->key_val();
 
-        return (string) \key($keyVal);
+        return (string) \key($key_val);
     }
 
     /**
-     * Returns the value from keyVal(), without reset.
+     * Returns the value from key_val(), without reset.
      *
      * @return string
      */
     private function value()
     {
-        $keyVal = $this->keyVal();
+        $key_val = $this->key_val();
 
         /** @var string */
-        return \reset($keyVal);
+        return \reset($key_val);
     }
 
-    public function testRepositoryInstanceOf()
+    public function test_repository_instance_of()
     {
-        self::assertInstanceOf(RepositoryInterface::class, RepositoryBuilder::createWithNoAdapters()->make());
-        self::assertInstanceOf(RepositoryInterface::class, RepositoryBuilder::createWithDefaultAdapters()->make());
+        self::assertInstanceOf(Repository_Interface::class, Repository_Builder::create_with_no_adapters()->make());
+        self::assertInstanceOf(Repository_Interface::class, Repository_Builder::create_with_default_adapters()->make());
     }
 
-    public function testMutableLoaderClearsEnvironmentVars()
+    public function test_mutable_loader_clears_environment_vars()
     {
-        $repository = RepositoryBuilder::createWithDefaultAdapters()->make();
+        $repository = Repository_Builder::create_with_default_adapters()->make();
 
         // Set an environment variable.
         $repository->set($this->key(), $this->value());
@@ -103,14 +103,14 @@ final class RepositoryTest extends TestCase
         self::assertFalse(isset($_SERVER[$this->key()]));
     }
 
-    public function testImmutableLoaderCannotClearExistingEnvironmentVars()
+    public function test_immutable_loader_cannot_clear_existing_environment_vars()
     {
         $this->load();
 
-        $repository = RepositoryBuilder::createWithDefaultAdapters()->immutable()->make();
+        $repository = Repository_Builder::create_with_default_adapters()->immutable()->make();
 
         // Pre-set an environment variable.
-        RepositoryBuilder::createWithDefaultAdapters()->make()->set($this->key(), $this->value());
+        Repository_Builder::create_with_default_adapters()->make()->set($this->key(), $this->value());
 
         // Attempt to clear the environment variable, check that it fails.
         $repository->clear($this->key());
@@ -119,11 +119,11 @@ final class RepositoryTest extends TestCase
         self::assertTrue(isset($_SERVER[$this->key()]));
     }
 
-    public function testImmutableLoaderCanClearSetEnvironmentVars()
+    public function test_immutable_loader_can_clear_set_environment_vars()
     {
         $this->load();
 
-        $repository = RepositoryBuilder::createWithDefaultAdapters()->immutable()->make();
+        $repository = Repository_Builder::create_with_default_adapters()->immutable()->make();
 
         // Set an environment variable.
         $repository->set($this->key(), $this->value());
@@ -136,46 +136,46 @@ final class RepositoryTest extends TestCase
         self::assertFalse(isset($_SERVER[$this->key()]));
     }
 
-    public function testCheckingWhetherVariableExists()
+    public function test_checking_whether_variable_exists()
     {
         $this->load();
 
-        $repo = RepositoryBuilder::createWithDefaultAdapters()->make();
+        $repo = Repository_Builder::create_with_default_adapters()->make();
 
         self::assertTrue($repo->has('FOO'));
         self::assertFalse($repo->has('NON_EXISTING_VARIABLE'));
     }
 
-    public function testHasWithBadVariable()
+    public function test_has_with_bad_variable()
     {
-        $repo = RepositoryBuilder::createWithDefaultAdapters()->make();
+        $repo = Repository_Builder::create_with_default_adapters()->make();
 
         $this->expectException(TypeError::class);
 
         $repo->has(null);
     }
 
-    public function testGettingVariableByName()
+    public function test_getting_variable_by_name()
     {
         $this->load();
 
-        $repo = RepositoryBuilder::createWithDefaultAdapters()->make();
+        $repo = Repository_Builder::create_with_default_adapters()->make();
 
         self::assertSame('bar', $repo->get('FOO'));
     }
 
-    public function testGettingNullVariable()
+    public function test_getting_null_variable()
     {
-        $repo = RepositoryBuilder::createWithDefaultAdapters()->make();
+        $repo = Repository_Builder::create_with_default_adapters()->make();
 
         $this->expectException(TypeError::class);
 
         $repo->get(null);
     }
 
-    public function testGettingEmptyVariable()
+    public function test_getting_empty_variable()
     {
-        $repo = RepositoryBuilder::createWithDefaultAdapters()->make();
+        $repo = Repository_Builder::create_with_default_adapters()->make();
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected name to be a non-empty string.');
@@ -183,29 +183,29 @@ final class RepositoryTest extends TestCase
         $repo->get('');
     }
 
-    public function testSettingVariable()
+    public function test_setting_variable()
     {
         $this->load();
 
-        $repo = RepositoryBuilder::createWithDefaultAdapters()->make();
+        $repo = Repository_Builder::create_with_default_adapters()->make();
 
         self::assertSame('bar', $repo->get('FOO'));
         $repo->set('FOO', 'new');
         self::assertSame('new', $repo->get('FOO'));
     }
 
-    public function testSettingNullVariable()
+    public function test_setting_null_variable()
     {
-        $repo = RepositoryBuilder::createWithDefaultAdapters()->make();
+        $repo = Repository_Builder::create_with_default_adapters()->make();
 
         $this->expectException(TypeError::class);
 
         $repo->set(null, 'foo');
     }
 
-    public function testSettingEmptyVariable()
+    public function test_setting_empty_variable()
     {
-        $repo = RepositoryBuilder::createWithDefaultAdapters()->make();
+        $repo = Repository_Builder::create_with_default_adapters()->make();
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected name to be a non-empty string.');
@@ -213,21 +213,21 @@ final class RepositoryTest extends TestCase
         $repo->set('', 'foo');
     }
 
-    public function testClearingVariable()
+    public function test_clearing_variable()
     {
         $this->load();
 
-        $repo = RepositoryBuilder::createWithDefaultAdapters()->make();
+        $repo = Repository_Builder::create_with_default_adapters()->make();
 
         self::assertTrue($repo->has('FOO'));
         $repo->clear('FOO');
         self::assertFalse($repo->has('FOO'));
     }
 
-    public function testClearingVariableWithArrayAdapter()
+    public function test_clearing_variable_with_array_adapter()
     {
-        $adapter = ArrayAdapter::create()->get();
-        $repo = RepositoryBuilder::createWithNoAdapters()->addReader($adapter)->addWriter($adapter)->make();
+        $adapter = Array_Adapter::create()->get();
+        $repo = Repository_Builder::create_with_no_adapters()->add_reader($adapter)->add_writer($adapter)->make();
 
         self::assertFalse($repo->has('FOO'));
         $repo->set('FOO', 'BAR');
@@ -236,18 +236,18 @@ final class RepositoryTest extends TestCase
         self::assertFalse($repo->has('FOO'));
     }
 
-    public function testClearingNullVariable()
+    public function test_clearing_null_variable()
     {
-        $repo = RepositoryBuilder::createWithDefaultAdapters()->make();
+        $repo = Repository_Builder::create_with_default_adapters()->make();
 
         $this->expectException(TypeError::class);
 
         $repo->clear(null);
     }
 
-    public function testClearingEmptyVariable()
+    public function test_clearing_empty_variable()
     {
-        $repo = RepositoryBuilder::createWithDefaultAdapters()->make();
+        $repo = Repository_Builder::create_with_default_adapters()->make();
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected name to be a non-empty string.');
@@ -255,11 +255,11 @@ final class RepositoryTest extends TestCase
         $repo->clear('');
     }
 
-    public function testCannotSetVariableOnImmutableInstance()
+    public function test_cannot_set_variable_on_immutable_instance()
     {
         $this->load();
 
-        $repo = RepositoryBuilder::createWithDefaultAdapters()->immutable()->make();
+        $repo = Repository_Builder::create_with_default_adapters()->immutable()->make();
 
         self::assertSame('bar', $repo->get('FOO'));
 
@@ -268,38 +268,38 @@ final class RepositoryTest extends TestCase
         self::assertSame('bar', $repo->get('FOO'));
     }
 
-    public function testCannotClearVariableOnImmutableInstance()
+    public function test_cannot_clear_variable_on_immutable_instance()
     {
         $this->load();
 
-        $repo = RepositoryBuilder::createWithDefaultAdapters()->immutable()->make();
+        $repo = Repository_Builder::create_with_default_adapters()->immutable()->make();
 
         $repo->clear('FOO');
 
         self::assertTrue($repo->has('FOO'));
     }
 
-    public function testBuildWithBadReader()
+    public function test_build_with_bad_reader()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected either an instance of ');
 
-        RepositoryBuilder::createWithNoAdapters()->addReader('123');
+        Repository_Builder::create_with_no_adapters()->add_reader('123');
     }
 
-    public function testBuildWithBadWriter()
+    public function test_build_with_bad_writer()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected either an instance of ');
 
-        RepositoryBuilder::createWithNoAdapters()->addWriter('123');
+        Repository_Builder::create_with_no_adapters()->add_writer('123');
     }
 
-    public function testBuildWithBadAdapter()
+    public function test_build_with_bad_adapter()
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected either an instance of ');
 
-        RepositoryBuilder::createWithNoAdapters()->addAdapter('');
+        Repository_Builder::create_with_no_adapters()->add_adapter('');
     }
 }

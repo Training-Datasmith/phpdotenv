@@ -71,7 +71,7 @@ final class Lines
     {
         return Str::pos($line, '="')->map(static function () use ($line): bool {
             return self::looks_like_multiline_stop($line, true) === false;
-        })->get_or_else(false);
+        })->getOrElse(false);
     }
     /**
      * Determine if the given line can be the start of a multiline variable.
@@ -86,7 +86,7 @@ final class Lines
         }
         return Regex::occurrences('/(?=([^\\\\]"))/', \str_replace('\\\\', '', $line))->map(static function (int $count) use ($started): bool {
             return $started ? $count > 1 : $count >= 1;
-        })->success()->get_or_else(false);
+        })->success()->getOrElse(false);
     }
     /**
      * Determine if the line in the file is a comment or whitespace.

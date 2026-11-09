@@ -101,22 +101,22 @@ SECRET_KEY="abc123"
 You can then load `.env` in your application with:
 
 ```php
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
+$dotenv = Dotenv\Dotenv::create_immutable(__DIR__);
 $dotenv->load();
 ```
 
 To suppress the exception that is thrown when there is no `.env` file, you can:
 
 ```php
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
-$dotenv->safeLoad();
+$dotenv = Dotenv\Dotenv::create_immutable(__DIR__);
+$dotenv->safe_load();
 ```
 
 Optionally you can pass in a filename as the second parameter, if you would
 like to use something other than `.env`:
 
 ```php
-$dotenv = Dotenv\Dotenv::createImmutable(__DIR__, 'myconfig');
+$dotenv = Dotenv\Dotenv::create_immutable(__DIR__, 'myconfig');
 $dotenv->load();
 ```
 
@@ -134,8 +134,8 @@ $s3_bucket = $_SERVER['S3_BUCKET'];
 Using `getenv()` and `putenv()` is strongly discouraged due to the fact that
 these functions are not thread safe, however it is still possible to instruct
 PHP dotenv to use these functions. Instead of calling
-`Dotenv::createImmutable`, one can call `Dotenv::createUnsafeImmutable`, which
-will add the `PutenvAdapter` behind the scenes. Your environment variables will
+`Dotenv::create_immutable`, one can call `Dotenv::createUnsafeImmutable`, which
+will add the `Putenv_Adapter` behind the scenes. Your environment variables will
 now be available using the `getenv` method, as well as the super-globals:
 
 ```php
@@ -163,22 +163,22 @@ TMP_DIR="${BASE_DIR}/tmp"
 
 Immutability refers to if Dotenv is allowed to overwrite existing environment
 variables. If you want Dotenv to overwrite existing environment variables,
-use `createMutable` instead of `createImmutable`:
+use `create_mutable` instead of `create_immutable`:
 
 ```php
-$dotenv = Dotenv\Dotenv::createMutable(__DIR__);
+$dotenv = Dotenv\Dotenv::create_mutable(__DIR__);
 $dotenv->load();
 ```
 
 Behind the scenes, this is instructing the "repository" to allow immutability
 or not. By default, the repository is configured to allow overwriting existing
 values by default, which is relevant if one is calling the "create" method
-using the `RepositoryBuilder` to construct a more custom repository:
+using the `Repository_Builder` to construct a more custom repository:
 
 ```php
-$repository = Dotenv\Repository\RepositoryBuilder::createWithNoAdapters()
-    ->addAdapter(Dotenv\Repository\Adapter\EnvConstAdapter::class)
-    ->addWriter(Dotenv\Repository\Adapter\PutenvAdapter::class)
+$repository = Dotenv\Repository\Repository_Builder::create_with_no_adapters()
+    ->add_adapter(Dotenv\Repository\Adapter\Env_Const_Adapter::class)
+    ->add_writer(Dotenv\Repository\Adapter\Putenv_Adapter::class)
     ->immutable()
     ->make();
 
@@ -194,7 +194,7 @@ By means of another example, one can also specify a set of variables to be
 allow listed. That is, only the variables in the allow list will be loaded:
 
 ```php
-$repository = Dotenv\Repository\RepositoryBuilder::createWithDefaultAdapters()
+$repository = Dotenv\Repository\Repository_Builder::create_with_default_adapters()
     ->allowList(['FOO', 'BAR'])
     ->make();
 
@@ -234,7 +234,7 @@ Beyond simply requiring a variable to be set, you might also need to ensure the
 variable is not empty:
 
 ```php
-$dotenv->required('DATABASE_DSN')->notEmpty();
+$dotenv->required('DATABASE_DSN')->not_empty();
 ```
 
 If the environment variable is empty, you'd get an Exception:
@@ -250,7 +250,7 @@ You might also need to ensure that the variable is of an integer value. You may
 do the following:
 
 ```php
-$dotenv->required('FOO')->isInteger();
+$dotenv->required('FOO')->is_integer();
 ```
 
 If the environment variable is not an integer, you'd get an Exception:
@@ -263,7 +263,7 @@ One may only want to enforce validation rules when a variable is set. We
 support this too:
 
 ```php
-$dotenv->ifPresent('FOO')->isInteger();
+$dotenv->if_present('FOO')->is_integer();
 ```
 
 
@@ -274,7 +274,7 @@ You may need to ensure a variable is in the form of a boolean, accepting
 following:
 
 ```php
-$dotenv->required('FOO')->isBoolean();
+$dotenv->required('FOO')->is_boolean();
 ```
 
 If the environment variable is not a boolean, you'd get an Exception:
@@ -286,7 +286,7 @@ One or more environment variables failed assertions: FOO is not a boolean.
 Similarly, one may write:
 
 ```php
-$dotenv->ifPresent('FOO')->isBoolean();
+$dotenv->if_present('FOO')->is_boolean();
 ```
 
 
@@ -297,7 +297,7 @@ should be. This is especially useful in situations where only a handful of
 options or drivers are actually supported by your code:
 
 ```php
-$dotenv->required('SESSION_STORE')->allowedValues(['Filesystem', 'Memcached']);
+$dotenv->required('SESSION_STORE')->allowed_values(['Filesystem', 'Memcached']);
 ```
 
 If the environment variable wasn't in this list of allowed values, you'd get a

@@ -3,9 +3,9 @@
 declare (strict_types=1);
 namespace Dotenv\Repository\Adapter;
 
-use Php_Option\None;
-use Php_Option\Option;
-use Php_Option\Some;
+use PhpOption\None;
+use PhpOption\Option;
+use PhpOption\Some;
 final class Apache_Adapter implements Adapter_Interface
 {
     /**
@@ -17,12 +17,12 @@ final class Apache_Adapter implements Adapter_Interface
     /**
      * Create a new instance of the adapter, if it is available.
      *
-     * @return \PhpOption\Option<\Dotenv\Repository\Adapter\AdapterInterface>
+     * @return \PhpOption\Option<\Dotenv\Repository\Adapter\Adapter_Interface>
      */
     public static function create()
     {
         if (self::is_supported()) {
-            /** @var \PhpOption\Option<AdapterInterface> */
+            /** @var \PhpOption\Option<Adapter_Interface> */
             return Some::create(new self());
         }
         return None::create();
@@ -46,7 +46,7 @@ final class Apache_Adapter implements Adapter_Interface
     public function read(string $name)
     {
         /** @var \PhpOption\Option<string> */
-        return Option::from_value(apache_getenv($name))->filter(static function ($value): bool {
+        return Option::fromValue(apache_getenv($name))->filter(static function ($value): bool {
             return \is_string($value) && $value !== '';
         });
     }

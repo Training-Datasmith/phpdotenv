@@ -8,13 +8,13 @@ final class Replacing_Writer implements Writer_Interface
     /**
      * The inner writer to use.
      *
-     * @var \Dotenv\Repository\Adapter\WriterInterface
+     * @var \Dotenv\Repository\Adapter\Writer_Interface
      */
     private $writer;
     /**
      * The inner reader to use.
      *
-     * @var \Dotenv\Repository\Adapter\ReaderInterface
+     * @var \Dotenv\Repository\Adapter\Reader_Interface
      */
     private $reader;
     /**
@@ -77,7 +77,7 @@ final class Replacing_Writer implements Writer_Interface
         if (isset($this->seen[$name])) {
             return true;
         }
-        if ($this->reader->read($name)->is_defined()) {
+        if ($this->reader->read($name)->isDefined()) {
             $this->seen[$name] = '';
             return true;
         }

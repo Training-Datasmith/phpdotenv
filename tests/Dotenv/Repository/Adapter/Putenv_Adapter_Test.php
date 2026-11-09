@@ -4,49 +4,49 @@ declare(strict_types=1);
 
 namespace Dotenv\Tests\Repository\Adapter;
 
-use Dotenv\Repository\Adapter\PutenvAdapter;
+use Dotenv\Repository\Adapter\Putenv_Adapter;
 use PHPUnit\Framework\TestCase;
 
-final class PutenvAdapterTest extends TestCase
+final class Putenv_Adapter_Test extends TestCase
 {
-    public function testGoodRead()
+    public function test_good_read()
     {
         \putenv('CONST_TEST=foo bar baz');
-        $value = self::createAdapter()->read('CONST_TEST');
+        $value = self::create_adapter()->read('CONST_TEST');
         self::assertTrue($value->isDefined());
         self::assertSame('foo bar baz', $value->get());
     }
 
-    public function testUndefinedRead()
+    public function test_undefined_read()
     {
         \putenv('CONST_TEST');
-        $value = self::createAdapter()->read('CONST_TEST');
+        $value = self::create_adapter()->read('CONST_TEST');
         self::assertFalse($value->isDefined());
     }
 
-    public function testGoodWrite()
+    public function test_good_write()
     {
-        self::assertTrue(self::createAdapter()->write('CONST_TEST', 'foo'));
+        self::assertTrue(self::create_adapter()->write('CONST_TEST', 'foo'));
         self::assertSame('foo', \getenv('CONST_TEST'));
     }
 
-    public function testEmptyWrite()
+    public function test_empty_write()
     {
-        self::assertTrue(self::createAdapter()->write('CONST_TEST', ''));
+        self::assertTrue(self::create_adapter()->write('CONST_TEST', ''));
         self::assertSame('', \getenv('CONST_TEST'));
     }
 
-    public function testGoodDelete()
+    public function test_good_delete()
     {
-        self::assertTrue(self::createAdapter()->delete('CONST_TEST'));
+        self::assertTrue(self::create_adapter()->delete('CONST_TEST'));
         self::assertFalse(\getenv('CONST_TEST'));
     }
 
     /**
-     * @return \Dotenv\Repository\Adapter\AdapterInterface
+     * @return \Dotenv\Repository\Adapter\Adapter_Interface
      */
-    private static function createAdapter()
+    private static function create_adapter()
     {
-        return PutenvAdapter::create()->get();
+        return Putenv_Adapter::create()->get();
     }
 }

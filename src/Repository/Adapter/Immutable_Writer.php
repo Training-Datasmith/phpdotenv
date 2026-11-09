@@ -8,13 +8,13 @@ final class Immutable_Writer implements Writer_Interface
     /**
      * The inner writer to use.
      *
-     * @var \Dotenv\Repository\Adapter\WriterInterface
+     * @var \Dotenv\Repository\Adapter\Writer_Interface
      */
     private $writer;
     /**
      * The inner reader to use.
      *
-     * @var \Dotenv\Repository\Adapter\ReaderInterface
+     * @var \Dotenv\Repository\Adapter\Reader_Interface
      */
     private $reader;
     /**
@@ -97,6 +97,6 @@ final class Immutable_Writer implements Writer_Interface
      */
     private function is_externally_defined(string $name): bool
     {
-        return $this->reader->read($name)->is_defined() && !isset($this->loaded[$name]);
+        return $this->reader->read($name)->isDefined() && !isset($this->loaded[$name]);
     }
 }

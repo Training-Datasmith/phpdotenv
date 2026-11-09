@@ -7,12 +7,12 @@ namespace Dotenv\Tests\Parser;
 use Dotenv\Parser\Lexer;
 use PHPUnit\Framework\TestCase;
 
-final class LexerTest extends TestCase
+final class Lexer_Test extends TestCase
 {
     /**
      * @return array{string,string[]}[]
      */
-    public static function provideLexCases()
+    public static function provide_lex_cases()
     {
         return [
             ['', []],
@@ -26,14 +26,14 @@ final class LexerTest extends TestCase
     }
 
     /**
-     * @dataProvider provideLexCases
+     * @dataProvider provide_lex_cases
      *
      * @param string   $input
      * @param string[] $output
      *
      * @return void
      */
-    public function testLex(string $input, array $output)
+    public function test_lex(string $input, array $output)
     {
         self::assertSame($output, \iterator_to_array(Lexer::lex($input)));
     }

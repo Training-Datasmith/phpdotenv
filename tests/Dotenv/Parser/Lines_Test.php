@@ -8,9 +8,9 @@ use Dotenv\Parser\Lines;
 use Dotenv\Util\Regex;
 use PHPUnit\Framework\TestCase;
 
-final class LinesTest extends TestCase
+final class Lines_Test extends TestCase
 {
-    public function testProcessBasic()
+    public function test_process_basic()
     {
         $content = \file_get_contents(\dirname(\dirname(__DIR__)).'/fixtures/env/assertions.env');
         self::assertIsString($content);
@@ -32,7 +32,7 @@ final class LinesTest extends TestCase
         self::assertSame($expected, Lines::process($result->success()->get()));
     }
 
-    public function testProcessQuotes()
+    public function test_process_quotes()
     {
         $content = \file_get_contents(\dirname(\dirname(__DIR__)).'/fixtures/env/multiline.env');
         self::assertIsString($content);

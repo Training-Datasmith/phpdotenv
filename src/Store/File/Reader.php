@@ -5,7 +5,7 @@ namespace Dotenv\Store\File;
 
 use Dotenv\Exception\Invalid_Encoding_Exception;
 use Dotenv\Util\Str;
-use Php_Option\Option;
+use PhpOption\Option;
 /**
  * @internal
  */
@@ -26,9 +26,9 @@ final class Reader
      * short circuit mode is enabled, then the returned array with have length
      * at most one. File paths that couldn't be read are omitted entirely.
      *
-     * @param string[]    $filePaths
+     * @param string[]    $file_paths
      *
-     * @throws \Dotenv\Exception\InvalidEncodingException
+     * @throws \Dotenv\Exception\Invalid_Encoding_Exception
      *
      * @return array<string, string>
      */
@@ -37,7 +37,7 @@ final class Reader
         $output = [];
         foreach ($file_paths as $file_path) {
             $content = self::read_from_file($file_path, $file_encoding);
-            if ($content->is_defined()) {
+            if ($content->isDefined()) {
                 $output[$file_path] = $content->get();
                 if ($short_circuit) {
                     break;
@@ -50,16 +50,16 @@ final class Reader
      * Read the given file.
      *
      *
-     * @throws \Dotenv\Exception\InvalidEncodingException
+     * @throws \Dotenv\Exception\Invalid_Encoding_Exception
      *
      * @return \PhpOption\Option<string>
      */
     private static function read_from_file(string $path, ?string $encoding = null)
     {
         /** @var Option<string> */
-        $content = Option::from_value(@\file_get_contents($path), false);
-        return $content->flat_map(static function (string $content) use ($encoding) {
-            return Str::utf8($content, $encoding)->map_error(static function (string $error): void {
+        $content = Option::fromValue(@\file_get_contents($path), false);
+        return $content->flatMap(static function (string $content) use ($encoding) {
+            return Str::utf8($content, $encoding)->mapError(static function (string $error): void {
                 throw new Invalid_Encoding_Exception($error);
             })->success();
         });

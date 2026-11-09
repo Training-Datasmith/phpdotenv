@@ -16,11 +16,11 @@ Release notes for 5.0.0 are available [here](https://github.com/vlucas/phpdotenv
 
 ### Details
 
-1. The `Dotenv\Dotenv::createImmutable` and `Dotenv\Dotenv::createMutable` methods no longer call will result in `getenv` and `putenv` being called. One should instead use `Dotenv\Dotenv::createUnsafeImmutable` and `Dotenv\Dotenv::createUnsafeMutable` methods, if one really needs these functions.
+1. The `Dotenv\Dotenv::create_immutable` and `Dotenv\Dotenv::create_mutable` methods no longer call will result in `getenv` and `putenv` being called. One should instead use `Dotenv\Dotenv::create_unsafe_immutable` and `Dotenv\Dotenv::create_unsafe_mutable` methods, if one really needs these functions.
 2. The `Dotenv\Dotenv` constructor has been modified to expect exactly 4 parameters: a store, a parser, a loader, and a repository. This likely won't affect many people, since it is more common to construct this class via the public static create methods. Those methods have not changed.
 3. Scalar typehints have been added to the public interface.
 4. The parser now returns a result type instead of raising an exception. This change is strictly internal, and most users won't notice a difference. The responsibility for raising an exception has simply been shifted up to the caller.
-5. Adapters have been refactored again, with changes to the repositories. In particular, the repository builder has been tweaked. It now expects to be explicitly told if you want to use the default adapters or not, and expects individual readers and writers to be added, one by one. Similar changes have been applied to the store factory. Moreover, the `ApacheAdapter` has been changed so that it behaves much like the other adapters. The old behaviour can be simulated by composing it with the new `ReplacingWriter` (see below). We will no longer include this adapter in our default setup, so that people can enable exactly what they need. Finally, by default, we will no longer be using the `PutenvAdapter`. It can be added, as required.
+5. Adapters have been refactored again, with changes to the repositories. In particular, the repository builder has been tweaked. It now expects to be explicitly told if you want to use the default adapters or not, and expects individual readers and writers to be added, one by one. Similar changes have been applied to the store factory. Moreover, the `ApacheAdapter` has been changed so that it behaves much like the other adapters. The old behaviour can be simulated by composing it with the new `ReplacingWriter` (see below). We will no longer include this adapter in our default setup, so that people can enable exactly what they need. Finally, by default, we will no longer be using the `Putenv_Adapter`. It can be added, as required.
 6. Variable whitelisting has been replaced with allow listing, and the responsibility has moved from the loader to a new adapter `GuardedWriter`.
 7. The parser has been moved to its own namespace and parses entire files now. This change is expected to have little impact when upgrading. The `Lines` class has also moved to the parser namespace.
 8. The loader now only returns the variables that were actually loaded into the repository, and not all the variables from the file. Moreover, it now expects as input the result of running the new parser (an array of entries), rather than raw file content.
@@ -28,13 +28,13 @@ Release notes for 5.0.0 are available [here](https://github.com/vlucas/phpdotenv
 The changes listed in (4) mean that instead of:
 
 ```php
-$repository = Dotenv\Repository\RepositoryBuilder::create()
+$repository = Dotenv\Repository\Repository_Builder::create()
     ->withReaders([
-        new Dotenv\Repository\Adapter\EnvConstAdapter(),
+        new Dotenv\Repository\Adapter\Env_Const_Adapter(),
     ])
     ->withWriters([
-        new Dotenv\Repository\Adapter\EnvConstAdapter(),
-        new Dotenv\Repository\Adapter\PutenvAdapter(),
+        new Dotenv\Repository\Adapter\Env_Const_Adapter(),
+        new Dotenv\Repository\Adapter\Putenv_Adapter(),
     ])
     ->make();
 ```
@@ -42,9 +42,9 @@ $repository = Dotenv\Repository\RepositoryBuilder::create()
 one would now write:
 
 ```php
-$repository = Dotenv\Repository\RepositoryBuilder::createWithNoAdapters()
-    ->addAdapter(Dotenv\Repository\Adapter\EnvConstAdapter::class)
-    ->addWriter(Dotenv\Repository\Adapter\PutenvAdapter::class)
+$repository = Dotenv\Repository\Repository_Builder::create_with_no_adapters()
+    ->add_adapter(Dotenv\Repository\Adapter\Env_Const_Adapter::class)
+    ->add_writer(Dotenv\Repository\Adapter\Putenv_Adapter::class)
     ->make();
 ```
 
@@ -53,7 +53,7 @@ Instead of passing class names, one can also pass actual adapter instances. Note
 To add an apache environment variable writer that only writes to existing apache environment variables, as was the default in v4, one should do the following:
 
 ```php
-$builder = Dotenv\Repository\RepositoryBuilder::createWithDefaultAdapters();
+$builder = Dotenv\Repository\Repository_Builder::create_with_default_adapters();
 
 Dotenv\Repository\Adapter\ApacheAdapter::create()->map(function ($adapter) {
     return new Dotenv\Repository\Adapter\ReplacingWriter($adapter, $adapter);
@@ -84,7 +84,7 @@ Release notes for 4.0.0 are available [here](https://github.com/vlucas/phpdotenv
 
 ### Details
 
-V4 has again changed the way you initialize the `Dotenv` class. If you want immutable loading of environment variables, then replace `Dotenv::create` with `Dotenv::createImmutable`, and if you want mutable loading, replace `Dotenv::create` with `Dotenv::createMutable` and `->overload()` with `->load()`. The `overload` method has been removed in favour of specifying mutability at object construction.
+V4 has again changed the way you initialize the `Dotenv` class. If you want immutable loading of environment variables, then replace `Dotenv::create` with `Dotenv::create_immutable`, and if you want mutable loading, replace `Dotenv::create` with `Dotenv::create_mutable` and `->overload()` with `->load()`. The `overload` method has been removed in favour of specifying mutability at object construction.
 
 The behaviour when parsing single quoted strings has now changed, to mimic the behaviour of bash. It is no longer possible to escape characters in single quoted strings, and everything is treated literally. As soon as the first single quote character is read, after the initial one, then the variable is treated as ending immediately at that point. When parsing unquoted or double quoted strings, it is now possible to escape dollar signs, to forcefully avoid variable interpolation. Escaping dollars is not mandated, in the sense that if a dollar is present, and not following by variable interpolation syntax, this is allowed, and the dollar will be treated as a literal dollar. Finally, interpolation of variables is now performed right to left, instead of left to right, so it is possible to nest interpolations to allow using the value of a variable as the name of another for further interpolation.
 
@@ -92,8 +92,8 @@ The `getEnvironmentVariableNames` method is no longer available. This is because
 
 There have been various internal refactorings. Apart from what has already been mentioned, the only other changes likely to affect developers is:
 
-1. The `Dotenv\Environment` namespace has been moved to `Dotenv\Repository`, the `Dotenv\Environment\Adapter\AdapterInterface` interface has been replaced by `Dotenv\Repository\Adapter\ReaderInterface` and `Dotenv\Repository\Adapter\WriterInterface`.
-2. The `Dotenv\Environment\DotenvFactory` has been (roughly) replaced by `Dotenv\Repository\RepositoryBuilder`, and `Dotenv\Environment\FactoryInterface` has been deleted.
+1. The `Dotenv\Environment` namespace has been moved to `Dotenv\Repository`, the `Dotenv\Environment\Adapter\Adapter_Interface` interface has been replaced by `Dotenv\Repository\Adapter\ReaderInterface` and `Dotenv\Repository\Adapter\WriterInterface`.
+2. The `Dotenv\Environment\DotenvFactory` has been (roughly) replaced by `Dotenv\Repository\Repository_Builder`, and `Dotenv\Environment\FactoryInterface` has been deleted.
 3. `Dotenv\Environment\AbstractVariables` has been replaced by `Dotenv\Repository\AbstractRepository`, `Dotenv\Environment\DotenvVariables` has been replaced by `Dotenv\Repository\AdapterRepository`, and `Dotenv\Environment\VariablesInterface` has been replaced by `Dotenv\Repository\RepositoryInterface`.
 4. The `Dotenv\Loader` class has been moved to `Dotenv\Loader\Loader`, and now has a different public interface. It no longer expects any parameters at construction, and implements only the new interface `Dotenv\Loader\LoaderInterface`. Its responsibility has changed to purely taking raw env file content, and handing it off to the parser, dealing with variable interpolation, and sending off instructions to the repository to set variables. No longer can it be used as a way to read the environment by callers, and nor does it track immutability.
 5. The `Dotenv\Parser` and `Dotenv\Lines` classes have moved to `Dotenv\Loader\Parser` and `Dotenv\Loader\Lines`, respectively. `Dotenv\Loader\Parser::parse` now return has either `null` or `Dotenv\Loader\Value` objects as values, instead of `string`s. This is to support the new variable interpolation and dollar escaping features.
@@ -105,16 +105,16 @@ The example at the bottom of the below upgrading guide, in V4 now looks like:
 <?php
 
 use Dotenv\Dotenv;
-use Dotenv\Repository\Adapter\EnvConstAdapter;
-use Dotenv\Repository\Adapter\ServerConstAdapter;
-use Dotenv\Repository\RepositoryBuilder;
+use Dotenv\Repository\Adapter\Env_Const_Adapter;
+use Dotenv\Repository\Adapter\Server_Const_Adapter;
+use Dotenv\Repository\Repository_Builder;
 
 $adapters = [
-	new EnvConstAdapter(),
-	new ServerConstAdapter(),
+	new Env_Const_Adapter(),
+	new Server_Const_Adapter(),
 ];
 
-$repository = RepositoryBuilder::create()
+$repository = Repository_Builder::create()
     ->withReaders($adapters)
     ->withWriters($adapters)
     ->immutable()
@@ -128,13 +128,13 @@ Since v3.2.0, it was easily possible to read a file and process variable interpo
 ```php
 <?php
 
-use Dotenv\Repository\Adapter\ArrayAdapter;
-use Dotenv\Repository\RepositoryBuilder;
+use Dotenv\Repository\Adapter\Array_Adapter;
+use Dotenv\Repository\Repository_Builder;
 use Dotenv\Loader\Loader;
 
-$adapters = [new ArrayAdapter()];
+$adapters = [new Array_Adapter()];
 
-$repository = RepositoryBuilder::create()
+$repository = Repository_Builder::create()
     ->withReaders($adapters)
     ->withWriters($adapters)
     ->make();
@@ -184,11 +184,11 @@ It's possible to use phpdotenv V3 in a threaded environment, instructing it to n
 <?php
 
 use Dotenv\Dotenv;
-use Dotenv\Environment\Adapter\EnvConstAdapter;
-use Dotenv\Environment\Adapter\ServerConstAdapter;
+use Dotenv\Environment\Adapter\Env_Const_Adapter;
+use Dotenv\Environment\Adapter\Server_Const_Adapter;
 use Dotenv\Environment\DotenvFactory;
 
-$factory = new DotenvFactory([new EnvConstAdapter(), new ServerConstAdapter()]);
+$factory = new DotenvFactory([new Env_Const_Adapter(), new Server_Const_Adapter()]);
 
 Dotenv::create($path, null, $factory)->load();
 ```

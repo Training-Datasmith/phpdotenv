@@ -25,7 +25,7 @@ final class Loader implements Loader_Interface
             $value = $entry->get_value()->map(static function (Value $value) use ($repository) {
                 return Resolver::resolve($repository, $value);
             });
-            if ($value->is_defined()) {
+            if ($value->isDefined()) {
                 $inner = $value->get();
                 if ($repository->set($name, $inner)) {
                     return \array_merge($vars, [$name => $inner]);

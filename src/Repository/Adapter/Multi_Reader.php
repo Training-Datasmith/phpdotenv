@@ -3,19 +3,19 @@
 declare (strict_types=1);
 namespace Dotenv\Repository\Adapter;
 
-use Php_Option\None;
+use PhpOption\None;
 final class Multi_Reader implements Reader_Interface
 {
     /**
      * The set of readers to use.
      *
-     * @var \Dotenv\Repository\Adapter\ReaderInterface[]
+     * @var \Dotenv\Repository\Adapter\Reader_Interface[]
      */
     private $readers;
     /**
      * Create a new multi-reader instance.
      *
-     * @param \Dotenv\Repository\Adapter\ReaderInterface[] $readers
+     * @param \Dotenv\Repository\Adapter\Reader_Interface[] $readers
      */
     public function __construct(array $readers)
     {
@@ -32,7 +32,7 @@ final class Multi_Reader implements Reader_Interface
     {
         foreach ($this->readers as $reader) {
             $result = $reader->read($name);
-            if ($result->is_defined()) {
+            if ($result->isDefined()) {
                 return $result;
             }
         }

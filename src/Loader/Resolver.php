@@ -7,7 +7,7 @@ use Dotenv\Parser\Value;
 use Dotenv\Repository\Repository_Interface;
 use Dotenv\Util\Regex;
 use Dotenv\Util\Str;
-use Php_Option\Option;
+use PhpOption\Option;
 final class Resolver
 {
     /**
@@ -42,7 +42,7 @@ final class Resolver
     {
         return Regex::replace_callback('/\A\${([a-zA-Z0-9_.]+)}/', static function (array $matches) use ($repository) {
             /** @var string */
-            return Option::from_value($repository->get($matches[1]))->get_or_else($matches[0]);
-        }, $str, 1)->success()->get_or_else($str);
+            return Option::fromValue($repository->get($matches[1]))->getOrElse($matches[0]);
+        }, $str, 1)->success()->getOrElse($str);
     }
 }

@@ -8,13 +8,13 @@ final class Multi_Writer implements Writer_Interface
     /**
      * The set of writers to use.
      *
-     * @var \Dotenv\Repository\Adapter\WriterInterface[]
+     * @var \Dotenv\Repository\Adapter\Writer_Interface[]
      */
     private $writers;
     /**
      * Create a new multi-writer instance.
      *
-     * @param \Dotenv\Repository\Adapter\WriterInterface[] $writers
+     * @param \Dotenv\Repository\Adapter\Writer_Interface[] $writers
      */
     public function __construct(array $writers)
     {

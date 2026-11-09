@@ -4,72 +4,72 @@ declare(strict_types=1);
 
 namespace Dotenv\Tests\Repository\Adapter;
 
-use Dotenv\Repository\Adapter\EnvConstAdapter;
+use Dotenv\Repository\Adapter\Env_Const_Adapter;
 use PHPUnit\Framework\TestCase;
 
-final class EnvConstAdapterTest extends TestCase
+final class Env_Const_Adapter_Test extends TestCase
 {
-    public function testGoodRead()
+    public function test_good_read()
     {
         $_ENV['CONST_TEST'] = 'foo bar baz';
-        $value = self::createAdapter()->read('CONST_TEST');
+        $value = self::create_adapter()->read('CONST_TEST');
         self::assertTrue($value->isDefined());
         self::assertSame('foo bar baz', $value->get());
     }
 
-    public function testFalseRead()
+    public function test_false_read()
     {
         $_ENV['CONST_TEST'] = false;
-        $value = self::createAdapter()->read('CONST_TEST');
+        $value = self::create_adapter()->read('CONST_TEST');
         self::assertTrue($value->isDefined());
         self::assertSame('false', $value->get());
     }
 
-    public function testTrueRead()
+    public function test_true_read()
     {
         $_ENV['CONST_TEST'] = true;
-        $value = self::createAdapter()->read('CONST_TEST');
+        $value = self::create_adapter()->read('CONST_TEST');
         self::assertTrue($value->isDefined());
         self::assertSame('true', $value->get());
     }
 
-    public function testBadTypeRead()
+    public function test_bad_type_read()
     {
         $_ENV['CONST_TEST'] = [123];
-        $value = self::createAdapter()->read('CONST_TEST');
+        $value = self::create_adapter()->read('CONST_TEST');
         self::assertFalse($value->isDefined());
     }
 
-    public function testUndefinedRead()
+    public function test_undefined_read()
     {
         unset($_ENV['CONST_TEST']);
-        $value = self::createAdapter()->read('CONST_TEST');
+        $value = self::create_adapter()->read('CONST_TEST');
         self::assertFalse($value->isDefined());
     }
 
-    public function testGoodWrite()
+    public function test_good_write()
     {
-        self::assertTrue(self::createAdapter()->write('CONST_TEST', 'foo'));
+        self::assertTrue(self::create_adapter()->write('CONST_TEST', 'foo'));
         self::assertSame('foo', $_ENV['CONST_TEST']);
     }
 
-    public function testEmptyWrite()
+    public function test_empty_write()
     {
-        self::assertTrue(self::createAdapter()->write('CONST_TEST', ''));
+        self::assertTrue(self::create_adapter()->write('CONST_TEST', ''));
         self::assertSame('', $_ENV['CONST_TEST']);
     }
 
-    public function testGoodDelete()
+    public function test_good_delete()
     {
-        self::assertTrue(self::createAdapter()->delete('CONST_TEST'));
+        self::assertTrue(self::create_adapter()->delete('CONST_TEST'));
         self::assertFalse(isset($_ENV['CONST_TEST']));
     }
 
     /**
-     * @return \Dotenv\Repository\Adapter\AdapterInterface
+     * @return \Dotenv\Repository\Adapter\Adapter_Interface
      */
-    private static function createAdapter()
+    private static function create_adapter()
     {
-        return EnvConstAdapter::create()->get();
+        return Env_Const_Adapter::create()->get();
     }
 }
